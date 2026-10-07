@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+output/
+*-Staged/
+manifest.json
+*.zip
+*.pak
+*.dll
+*.sig
+Pub.key
+Addon.key
+!client-mods/season-pass/assets/AionMarketShortcut.dll
