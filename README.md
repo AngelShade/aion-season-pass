@@ -1,5 +1,8 @@
 # Aion 4.8 Aetherfall Season Pass client patch
 
+<img width="1316" height="774" alt="image" src="https://github.com/user-attachments/assets/8c0c62a8-b891-49f8-b6d3-79dcfa02fb96" />
+
+
 This repository contains the incremental client patch tools for the Aetherfall Season Pass. Season progress, purchases and reward claims remain on the Aetherfall GameServer and are saved separately for each character. Players install the client patch once so the in-game browser can open the pass and authenticate with the character already logged in.
 
 ## Player installation
