@@ -1,45 +1,60 @@
-# Aion 4.8 Aetherfall Season Pass client patch
+# Aion 4.8 Aetherfall Season Pass
 
 <img width="1316" height="774" alt="image" src="https://github.com/user-attachments/assets/8c0c62a8-b891-49f8-b6d3-79dcfa02fb96" />
 
+Complete source release for a character-owned, 30-level Season Pass on the Beyond Aion 4.8 emulator. It includes Free, Premium and Advanced Premium tracks, daily/weekly/season missions, in-game Kinah purchases, reward previews, claim history and transactional Black Cloud mail delivery.
 
-This repository contains the incremental client patch tools for the Aetherfall Season Pass. Season progress, purchases and reward claims remain on the Aetherfall GameServer and are saved separately for each character. Players install the client patch once so the in-game browser can open the pass and authenticate with the character already logged in.
+## Included
 
-## Player installation
+- Complete Commons, GameServer, LoginServer and ChatServer source and Maven build files.
+- Season Pass services, authenticated HTTP listener, gameplay hooks, SQL schema, mission/reward configuration and browser artwork.
+- Required native reward-box definitions and transaction-aware inventory persistence.
+- A standalone client builder: native browser window, exact URL authentication hooks, item icon bridge, Additional Functions entry, `/seasonpass`, and a ticket in both English HUD layouts.
+- Local archive signing with a separate Addon.key, guarded client installation and restoration, and server distribution build/install scripts.
 
-1. Confirm your server operator has enabled the Aetherfall Season Pass and has given you the server's HTTPS address.
-2. Use the supported Aion 4.8 NA 64-bit English client with the Aetherfall four-window browser integration already installed (Cash Shop, Central Market, Wardrobe, and Journey). This incremental patch preserves that integration and the existing graphics, cursor, pet, and signed-addon state.
-3. Install Python 3.10+, Pillow (`python -m pip install Pillow`), and Java. The client builder uses your own installed game files and signing state; it does not download or redistribute Aion files.
-4. Close Aion completely. From the extracted repository, stage the patch using your own client path and the HTTPS address provided by the operator:
+The client integration is built from the supported original client; no previously installed Shop, Market, Wardrobe, Journey, graphics package or local recovery receipt is required. Native item artwork comes directly from the recipient's Items.pak.
 
-   ```powershell
-   python client-mods/season-pass/prepare.py --client "C:\Aion 4.8 NA" --output "C:\Aion-SeasonPass-Staged" --server-url "https://play.example.com"
-   ```
+## Requirements
 
-5. Review the staged `manifest.json`, then install it:
+Server: JDK 25, Maven and MySQL/MariaDB. Client builder: Python 3.12+, Pillow, JDK 25, and Visual Studio 2022 C++ Build Tools with the Windows SDK.
 
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File client-mods/season-pass/install.ps1 -PreparedPath "C:\Aion-SeasonPass-Staged"
-   ```
+Client: original Aion 4.8 NA, 64-bit English, with its RelicCalc addon. The exact original Game.dll SHA-256 is `5334cf2164468678e45fe1a5decf58a0fbc4fd7f22cfdcbb87d28edce8d2c11c`. CrySystem and Awesomium are also checked. Use an original client copy for this builder; existing native patches are rejected rather than replaced.
 
-6. Start Aion, log in, and open **Additional Functions → Aetherfall Season Pass**, the ticket above Central Market, or `/seasonpass`.
+## Server build and installation
 
-The installer verifies client hashes, backs up every replaced file, and rolls back if a copy fails. To restore, close Aion and run `client-mods/season-pass/restore.ps1 -BackupPath "<printed SeasonPass-backups path>"`. Restore later client patches first.
+```powershell
+./Build-Server.ps1 -OutputRoot 'C:\Aion-SeasonPass-Build'
+./Install-Server.ps1 -Archive 'C:\Aion-SeasonPass-Build\game-server\game-server.zip' -Destination 'C:\Aion-SeasonPass-Server'
+```
 
-## For the server operator
+Initialize the database using `sql/aion_gs.sql`, then configure the new server's database and LoginServer connection using the [upstream setup guide](docs/UPSTREAM_README.md). Keep private settings in ignored `config/mygs.properties`. The installer uses a new server folder and does not overwrite an existing customized deployment.
 
-Keep the GameServer marketplace listener private on loopback and expose the Season Pass through HTTPS. The client URL is compiled into its exact native navigation and authentication allowlist, so build and distribute one matching client patch with your public HTTPS origin. See [remote player setup](docs/REMOTE_SETUP.md).
+The pass starts through GameServer's normal startup and stops through its normal shutdown. `config/season-pass/season.properties` enables the pass and defaults to loopback port 8091. The included shared Central Market code is disabled by default and is not required to run its own listener. See [server and season setup](docs/SEASON_PASS.md).
 
-The patch builder requires the existing Aetherfall client integration and its recovery metadata. It is not a vanilla-client installer. If your players do not already have the supported Market/Shop/Wardrobe/Journey browser base, do not distribute this incremental package until that base is prepared for them.
+## Client preparation and installation
 
-## Package contents
+Install Pillow with `python -m pip install Pillow`, then fully close Aion. Use the same public HTTPS origin supplied by the server operator:
 
-- `client-mods/season-pass`: incremental builder, guarded installer/restore, custom Season Pass ticket artwork, and verification utilities.
-- `client-mods/transmog-menu`, `client-mods/speech-bubbles`, `client-mods/market-shortcut`: source dependencies used to preserve the existing native browser, signed addon and HUD behavior.
-- `docs/SEASON_PASS.md` and `docs/SEASON_PASS_REWARDS.md`: feature rules and reward provenance.
+```powershell
+python client-mods/season-pass/prepare.py --client 'C:\Aion 4.8 NA' --output 'C:\SeasonPass-Staged' --server-url 'https://play.example.com'
+python client-mods/season-pass/verify_package.py 'C:\SeasonPass-Staged'
+./client-mods/season-pass/install.ps1 -PreparedPath 'C:\SeasonPass-Staged'
+```
 
-No Aion client archive, stock executable, private signing key, prepared client snapshot, player database, or compiled GameServer JAR is included.
+`Install-Client.cmd` provides the same steps interactively. Preparation writes only to the staging directory. Installation checks hashes and backs up every changed file. To restore, close Aion and run `client-mods/season-pass/restore.ps1 -BackupPath '<printed backup path>'`.
+
+Open the pass using the ticket beside the stock Shop button, **Additional Functions → Aetherfall Season Pass**, or `/seasonpass`.
+
+For client and server on the same PC, use `http://127.0.0.1:8091`. For remote players, follow [HTTPS setup](docs/REMOTE_SETUP.md). One common server address is used by all players; progress and claims remain separate for each character.
+
+## Verification
+
+`verify_package.py` checks native browser/authentication patch bytes, URL consistency, item indexes, both HUD layouts, English resources, the stock model key and all three addon signatures. `verify_install.py` runs the real installer and restore against a disposable client copy. The server includes rules/catalog/database and production HTTP/media checks under `game-server/test`.
+
+Recipient acceptance includes opening the pass in Aion, native item tooltips, mission progression, Kinah purchases, mail delivery, relogging, and preserving stock pets and menus. Source and offline checks do not establish those interactions in the recipient's game.
 
 ## Credits and license
 
-Based on the Beyond Aion 4.8 server emulator and its GPL-3.0 license. Original Aetherfall Season Pass artwork and integration by AngelShade. Aion is a trademark of its respective owner; this project is an unofficial community modification.
+AngelShade — Aetherfall Season Pass, client integration, original ticket and celestial artwork, and shared transaction/browser foundations. Beyond Aion contributors — base emulator. roxfan — original Aion PAK codec work. GPL-3.0; see LICENSE. Aion is a trademark of its respective owner. Unofficial community modification.
+
+No original client executable/archive, extracted item PNGs, player database, credentials, private signing key or compiled server JAR is committed. Builders use the recipient's own client and generate local binaries and signatures.

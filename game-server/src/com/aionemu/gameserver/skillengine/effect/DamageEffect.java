@@ -1,0 +1,95 @@
+package com.aionemu.gameserver.skillengine.effect;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
+
+import com.aionemu.gameserver.controllers.attack.AttackUtil;
+import com.aionemu.gameserver.model.SkillElement;
+import com.aionemu.gameserver.network.aion.serverpackets.SM_ATTACK_STATUS.LOG;
+import com.aionemu.gameserver.network.aion.serverpackets.SM_ATTACK_STATUS.TYPE;
+import com.aionemu.gameserver.skillengine.change.Func;
+import com.aionemu.gameserver.skillengine.model.ActivationAttribute;
+import com.aionemu.gameserver.skillengine.model.Effect;
+
+/**
+ * @author ATracer
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "DamageEffect")
+public abstract class DamageEffect extends EffectTemplate {
+
+	@XmlAttribute
+	protected Func mode = Func.ADD;
+	@XmlAttribute
+	protected boolean shared;
+
+	@Override
+	public void applyEffect(Effect effect) {
+		if (effect.getSkillTemplate().getActivationAttribute() == ActivationAttribute.PROVOKED) {
+			onAttack(effect, TYPE.DAMAGE, LOG.PROCATKINSTANT);
+		} else {
+			onAttack(effect, TYPE.REGULAR, LOG.REGULAR);
+			effect.getEffector().getObserveController().notifyAttackObservers(effect.getEffected(), effect.getSkillId());
+		}
+	}
+
+	private void onAttack(Effect effect, TYPE type, LOG log) {
+		effect.getEffected().getController().onAttack(effect, type, effect.getReserveds(this.position).getValue(), true, log, hopType);
+	}
+
+	@Override
+	protected void resolveMagicalCritical(Effect effect) {
+		if (element != SkillElement.NONE && effect.getSkillTemplate().isApplyMagicalCritical())
+			effect.rollMagicalCritical(position, calculateCritProbMod(effect));
+	}
+
+	@Override
+	public void calculateDamage(Effect effect) {
+		int valueWithDelta = calculateBaseValue(effect);
+		AttackUtil.calculateSkillResult(effect, valueWithDelta, this, false);
+	}
+
+	public Func getMode() {
+		return mode;
+	}
+
+	/**
+	 * @return the shared
+	 */
+	public boolean isShared() {
+		return shared;
+	}
+	
+	/**
+	 * Determines whether movement-based modifiers should be applied
+	 * to this damage effect during damage calculation.
+	 *
+	 * <p>Movement-based modifiers may vary depending on the attacker's
+	 * movement state (e.g. standing, moving forward, or moving backward).
+	 * This method only defines whether such modifiers are applicable to
+	 * the effect at all.</p>
+	 *
+	 * <p>Specific {@link DamageEffect} implementations may override this
+	 * method to exclude themselves from movement-based damage adjustments.</p>
+	 *
+	 * @return {@code true} if movement-based modifiers should be applied,
+	 *         {@code false} otherwise
+	 */
+	public boolean shouldApplyAttackerMovementModifier() {
+		return true;
+	}
+
+	public boolean shouldApplyMagicalSkillBoostBonus(Effect effect) {
+		return effect.getSkillTemplate().isApplyMagicalSkillBoostBonus() && !effect.getEffector().equals(effect.getEffected());
+	}
+
+	public boolean shouldUseKnowledge() {
+		return true;
+	}
+
+	public boolean shouldUseBoostSpellAttackEffects() {
+		return true;
+	}
+}

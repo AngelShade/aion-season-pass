@@ -1,0 +1,91 @@
+# level	track (0 free, 1 premium, 2 advanced)	item_id	quantity	name	description	class_bundle (NONE/NORMAL/GREATER/MAJOR)
+1	0	186000237	20	Ancient Coin	Ancient Coins toward level-65 equipment and supplies from Ancient Coin merchants.	NONE
+1	1	166020000	1	Omega Enchantment Stone	Endgame equipment enchantment material, including eligible equipment amplification. Enchantment can fail.	NONE
+1	2	166020000	2	Omega Enchantment Stone	Endgame equipment enchantment material, including eligible equipment amplification. Enchantment can fail.	NONE
+2	0	186000236	15	Blood Mark	Blood Marks toward equipment and supplies from Blood Mark merchants.	NONE
+2	1	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+2	2	166030013	2	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+3	0	188053666	1	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+3	1	188052741	2	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+3	2	188052741	3	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+4	0	188052741	1	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+4	1	188053666	2	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+4	2	188053666	3	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+5	0	188052741	2	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+5	1	188053750	2	Gladiator Stigma Bundle	One random chargeable normal stigma of your advanced class per bundle. Duplicate copies are used for 4.8 stigma charging.	NORMAL
+5	2	188053761	2	Gladiator Greater Stigma Bundle	One random chargeable greater stigma of your advanced class per bundle. Duplicate copies are used for 4.8 stigma charging.	GREATER
+6	0	186000237	20	Ancient Coin	Ancient Coins toward level-65 equipment and supplies from Ancient Coin merchants.	NONE
+6	1	188052741	1	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+6	2	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+7	0	186000237	20	Ancient Coin	Ancient Coins toward level-65 equipment and supplies from Ancient Coin merchants.	NONE
+7	1	166020000	1	Omega Enchantment Stone	Endgame equipment enchantment material, including eligible equipment amplification. Enchantment can fail.	NONE
+7	2	166020000	2	Omega Enchantment Stone	Endgame equipment enchantment material, including eligible equipment amplification. Enchantment can fail.	NONE
+8	0	186000236	15	Blood Mark	Blood Marks toward equipment and supplies from Blood Mark merchants.	NONE
+8	1	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+8	2	166030013	2	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+9	0	188053666	1	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+9	1	188052741	2	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+9	2	188052741	3	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+10	0	188053321	1	[Event] Empyrean Plume Chest	Choose an Attack or Magic Boost Empyrean Plume for your faction in the native selection window. Each chest gives one plume.	NONE
+10	1	188053761	2	Gladiator Greater Stigma Bundle	One random chargeable greater stigma of your advanced class per bundle. Duplicate copies are used for 4.8 stigma charging.	GREATER
+10	2	188053772	2	Gladiator Major Stigma Bundle	One random chargeable major stigma of your advanced class per bundle. Duplicate copies are used for 4.8 stigma charging.	MAJOR
+11	0	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+11	1	166150019	2	Assured Greater Felicitous Socketing (Mythic)	100% manastone socketing aid for eligible Mythic equipment up to level 65. Consumed with the socketing attempt.	NONE
+11	2	166150019	3	Assured Greater Felicitous Socketing (Mythic)	100% manastone socketing aid for eligible Mythic equipment up to level 65. Consumed with the socketing attempt.	NONE
+12	0	186000237	20	Ancient Coin	Ancient Coins toward level-65 equipment and supplies from Ancient Coin merchants.	NONE
+12	1	188052741	1	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+12	2	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+13	0	186000237	20	Ancient Coin	Ancient Coins toward level-65 equipment and supplies from Ancient Coin merchants.	NONE
+13	1	166020000	1	Omega Enchantment Stone	Endgame equipment enchantment material, including eligible equipment amplification. Enchantment can fail.	NONE
+13	2	166020000	2	Omega Enchantment Stone	Endgame equipment enchantment material, including eligible equipment amplification. Enchantment can fail.	NONE
+14	0	186000236	15	Blood Mark	Blood Marks toward equipment and supplies from Blood Mark merchants.	NONE
+14	1	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+14	2	166030013	2	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+15	0	166020000	1	Omega Enchantment Stone	Endgame equipment enchantment material, including eligible equipment amplification. Enchantment can fail.	NONE
+15	1	110900234	1	[Event] Dynasty Light Armor	Permanent native event Dynasty Light Armor appearance. An event edition for equipment remodeling.	NONE
+15	2	110900233	1	[Event] Dynasty Heavy Armor	Permanent native event Dynasty Heavy Armor appearance. An event edition for equipment remodeling.	NONE
+16	0	188052741	1	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+16	1	188053666	2	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+16	2	188053666	3	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+17	0	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+17	1	166150019	2	Assured Greater Felicitous Socketing (Mythic)	100% manastone socketing aid for eligible Mythic equipment up to level 65. Consumed with the socketing attempt.	NONE
+17	2	166150019	3	Assured Greater Felicitous Socketing (Mythic)	100% manastone socketing aid for eligible Mythic equipment up to level 65. Consumed with the socketing attempt.	NONE
+18	0	186000237	20	Ancient Coin	Ancient Coins toward level-65 equipment and supplies from Ancient Coin merchants.	NONE
+18	1	188052741	1	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+18	2	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+19	0	186000237	20	Ancient Coin	Ancient Coins toward level-65 equipment and supplies from Ancient Coin merchants.	NONE
+19	1	166020000	1	Omega Enchantment Stone	Endgame equipment enchantment material, including eligible equipment amplification. Enchantment can fail.	NONE
+19	2	166020000	2	Omega Enchantment Stone	Endgame equipment enchantment material, including eligible equipment amplification. Enchantment can fail.	NONE
+20	0	188053750	2	Gladiator Stigma Bundle	One random chargeable normal stigma of your advanced class per bundle. Duplicate copies are used for 4.8 stigma charging.	NORMAL
+20	1	188053772	2	Gladiator Major Stigma Bundle	One random chargeable major stigma of your advanced class per bundle. Duplicate copies are used for 4.8 stigma charging.	MAJOR
+20	2	188053321	2	[Event] Empyrean Plume Chest	Choose an Attack or Magic Boost Empyrean Plume for your faction in the native selection window. Each chest gives one plume.	NONE
+21	0	188053666	1	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+21	1	188052741	2	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+21	2	188052741	3	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+22	0	188052741	1	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+22	1	188053666	2	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+22	2	188053666	3	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+23	0	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+23	1	166150019	2	Assured Greater Felicitous Socketing (Mythic)	100% manastone socketing aid for eligible Mythic equipment up to level 65. Consumed with the socketing attempt.	NONE
+23	2	166150019	3	Assured Greater Felicitous Socketing (Mythic)	100% manastone socketing aid for eligible Mythic equipment up to level 65. Consumed with the socketing attempt.	NONE
+24	0	186000237	20	Ancient Coin	Ancient Coins toward level-65 equipment and supplies from Ancient Coin merchants.	NONE
+24	1	188052741	1	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+24	2	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+25	0	188053761	1	Gladiator Greater Stigma Bundle	One random chargeable greater stigma of your advanced class per bundle. Duplicate copies are used for 4.8 stigma charging.	GREATER
+25	1	190100151	1	Shugo Gyrocopter	Permanent character-bound Shugo Gyrocopter. Ride at level 60. This edition cannot be traded.	NONE
+25	2	166150019	5	Assured Greater Felicitous Socketing (Mythic)	100% manastone socketing aid for eligible Mythic equipment up to level 65. Consumed with the socketing attempt.	NONE
+26	0	186000236	15	Blood Mark	Blood Marks toward equipment and supplies from Blood Mark merchants.	NONE
+26	1	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+26	2	166030013	2	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+27	0	188053666	1	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+27	1	188052741	2	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+27	2	188052741	3	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+28	0	188052741	1	[Event] Brilliant Composite Manastone Bundle	Choose one of 18 level-60 composite manastones per bundle in the native selection window. Pick stats for your build.	NONE
+28	1	188053666	2	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+28	2	188053666	3	[Event] Ceramium Medal Box	Open each native event box for 1-3 Ceramium Medals toward Abyss equipment. Quantity is random.	NONE
+29	0	166030013	1	[Event] Tempering Solution	Native event material for tempering eligible plumes and accessories. Tempering can fail.	NONE
+29	1	166150019	2	Assured Greater Felicitous Socketing (Mythic)	100% manastone socketing aid for eligible Mythic equipment up to level 65. Consumed with the socketing attempt.	NONE
+29	2	166150019	3	Assured Greater Felicitous Socketing (Mythic)	100% manastone socketing aid for eligible Mythic equipment up to level 65. Consumed with the socketing attempt.	NONE
+30	0	188052319	1	[Event] Dragon Lord's Wing Box	Native event box containing Tiamat's Spectral Wings. A permanent Dragon Lord wing reward; equip at level 60.	NONE
+30	1	190020133	1	[Event] Stormwing Egg	Adopt a permanent Stormwing pet from this native event egg. Supports automatic looting and automatic food/scroll use.	NONE
+30	2	188053646	1	Nether Dragon King's Sealed Box	Choose one level-65 Mythic Nether Dragon King weapon or shield from 14 native options. Keep the original item stats and selection window.	NONE

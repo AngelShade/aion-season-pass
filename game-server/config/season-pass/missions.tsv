@@ -1,0 +1,18 @@
+# id	cadence	event	target	xp	name	description
+d-login	DAILY	LOGIN	1	150	A new beginning	Log in once today. Reconnecting does not count twice.
+d-hunt	DAILY	HUNT	30	250	Atreia patrol	Defeat 30 creatures no more than 10 levels below you. Nearby group credit counts.
+d-quest	DAILY	QUEST	3	250	A helping hand	Complete 3 quests through their normal turn-in.
+d-gather	DAILY	GATHER	10	200	Gathering expedition	Successfully gather 10 times.
+d-time	DAILY	MINUTE	30	250	Time well spent	Spend 30 minutes online today.
+w-hunt	WEEKLY	HUNT	200	600	Trailblazer	Defeat 200 level-appropriate creatures.
+w-quest	WEEKLY	QUEST	15	600	For the people	Complete 15 quests.
+w-elite	WEEKLY	ELITE	15	600	Against the odds	Defeat 15 level-appropriate elite or stronger creatures.
+w-gather	WEEKLY	GATHER	75	500	Resourceful	Successfully gather 75 times.
+w-craft	WEEKLY	CRAFT	20	500	Artisan's touch	Finish 20 successful crafts. Failed crafts and morphing do not count.
+w-pvp	WEEKLY	PVP	5	500	Rival encounters	Defeat 5 enemy-faction players within 10 levels. Each rival counts once per 30 minutes; same-account kills never count.
+s-hunt	SEASON	HUNT	1500	2000	Defender of Atreia	Defeat 1500 level-appropriate creatures this season.
+s-quest	SEASON	QUEST	100	2000	An enduring legacy	Complete 100 quests this season.
+s-elite	SEASON	ELITE	100	1500	The greater challenge	Defeat 100 elite or stronger creatures.
+s-gather	SEASON	GATHER	500	1500	Atreia's bounty	Successfully gather 500 times this season.
+s-time	SEASON	MINUTE	900	2000	A world to explore	Spend 15 hours online this season.
+s-craft	SEASON	CRAFT	150	1500	Master of the workshop	Finish 150 successful crafts.

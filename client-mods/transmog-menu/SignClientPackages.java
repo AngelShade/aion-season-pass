@@ -57,7 +57,6 @@ class SignClientPackages {
             paths.filter(Files::isRegularFile)
                 .filter(p -> p.getFileName().toString().endsWith(".pak.sig"))
                 .filter(p -> !p.toString().contains("TransmogMenu-backups"))
-                .filter(p -> !p.toString().contains("MarketShortcut-backups"))
                 .filter(p -> !p.toString().contains("SeasonPass-backups"))
                 .forEach(p -> actual.add(client.relativize(p).toString().replace('\\', '/')));
         }

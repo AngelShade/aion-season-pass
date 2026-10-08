@@ -1,0 +1,111 @@
+package quest.brusthonin;
+
+import static com.aionemu.gameserver.model.DialogAction.*;
+
+import com.aionemu.gameserver.model.gameobjects.Item;
+import com.aionemu.gameserver.model.gameobjects.Npc;
+import com.aionemu.gameserver.model.gameobjects.player.Player;
+import com.aionemu.gameserver.network.aion.serverpackets.SM_DIALOG_WINDOW;
+import com.aionemu.gameserver.questEngine.handlers.AbstractQuestHandler;
+import com.aionemu.gameserver.questEngine.handlers.HandlerResult;
+import com.aionemu.gameserver.questEngine.model.QuestEnv;
+import com.aionemu.gameserver.questEngine.model.QuestState;
+import com.aionemu.gameserver.questEngine.model.QuestStatus;
+import com.aionemu.gameserver.services.QuestService;
+import com.aionemu.gameserver.utils.PacketSendUtility;
+
+/**
+ * @author Aion Gates
+ */
+public class _4060TheZombiesDescendant extends AbstractQuestHandler {
+
+	public _4060TheZombiesDescendant() {
+		super(4060);
+	}
+
+	@Override
+	public void register() {
+		qe.registerQuestNpc(205156).addOnTalkEvent(questId);
+		qe.registerQuestNpc(204143).addOnTalkEvent(questId);
+		qe.registerQuestNpc(204731).addOnTalkEvent(questId);
+		qe.registerQuestNpc(205204).addOnTalkEvent(questId);
+		qe.registerQuestItem(182209037, questId);
+	}
+
+	@Override
+	public boolean onDialogEvent(QuestEnv env) {
+		final Player player = env.getPlayer();
+		QuestState qs = player.getQuestStateList().getQuestState(questId);
+
+		int targetId = 0;
+		if (env.getVisibleObject() instanceof Npc)
+			targetId = ((Npc) env.getVisibleObject()).getNpcId();
+		if (targetId == 0) {
+			if (env.getDialogActionId() == QUEST_ACCEPT_1) {
+				QuestService.startQuest(env);
+				PacketSendUtility.sendPacket(player, new SM_DIALOG_WINDOW(0, 0));
+				return true;
+			}
+		} else if (targetId == 205156) {
+			if (qs != null && qs.getStatus() == QuestStatus.START && qs.getQuestVarById(0) == 0) {
+				if (env.getDialogActionId() == QUEST_SELECT)
+					return sendQuestDialog(env, 1352);
+				else if (env.getDialogActionId() == SETPRO1) {
+					qs.setQuestVarById(0, qs.getQuestVarById(0) + 1);
+					updateQuestStatus(env);
+					PacketSendUtility.sendPacket(player, new SM_DIALOG_WINDOW(env.getVisibleObject().getObjectId(), 10));
+					return true;
+				} else
+					return sendQuestStartDialog(env);
+			}
+		} else if (targetId == 204143) {
+			if (qs != null && qs.getStatus() == QuestStatus.START && qs.getQuestVarById(0) == 1) {
+				if (env.getDialogActionId() == QUEST_SELECT)
+					return sendQuestDialog(env, 1693);
+				else if (env.getDialogActionId() == SETPRO2) {
+					qs.setQuestVarById(0, qs.getQuestVarById(0) + 1);
+					updateQuestStatus(env);
+					PacketSendUtility.sendPacket(player, new SM_DIALOG_WINDOW(env.getVisibleObject().getObjectId(), 10));
+					return true;
+				} else
+					return sendQuestStartDialog(env);
+			}
+		} else if (targetId == 204731) {
+			if (qs != null && qs.getStatus() == QuestStatus.START && qs.getQuestVarById(0) == 2) {
+				if (env.getDialogActionId() == QUEST_SELECT)
+					return sendQuestDialog(env, 2034);
+				else if (env.getDialogActionId() == SETPRO3) {
+					qs.setQuestVarById(0, qs.getQuestVarById(0) + 1);
+					updateQuestStatus(env);
+					PacketSendUtility.sendPacket(player, new SM_DIALOG_WINDOW(env.getVisibleObject().getObjectId(), 10));
+					return true;
+				} else
+					return sendQuestStartDialog(env);
+			}
+		} else if (targetId == 205204) {
+			if (qs != null) {
+				if (env.getDialogActionId() == QUEST_SELECT && qs.getStatus() == QuestStatus.START) {
+					return sendQuestDialog(env, 2375);
+				} else if (env.getDialogActionId() == SELECT_QUEST_REWARD && qs.getStatus() != QuestStatus.COMPLETE) {
+					removeQuestItem(env, 182209037, 1);
+					qs.setQuestVar(1);
+					qs.setStatus(QuestStatus.REWARD);
+					updateQuestStatus(env);
+					return sendQuestEndDialog(env);
+				} else
+					return sendQuestEndDialog(env);
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public HandlerResult onItemUseEvent(QuestEnv env, Item item) {
+		int id = item.getItemTemplate().getTemplateId();
+
+		if (id != 182209037)
+			return HandlerResult.UNKNOWN;
+		sendQuestDialog(env, 4);
+		return HandlerResult.SUCCESS;
+	}
+}

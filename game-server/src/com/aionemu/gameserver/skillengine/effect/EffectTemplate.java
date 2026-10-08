@@ -1,0 +1,584 @@
+package com.aionemu.gameserver.skillengine.effect;
+
+import java.util.Collections;
+import java.util.List;
+
+import javax.xml.bind.annotation.*;
+
+import org.slf4j.LoggerFactory;
+
+import com.aionemu.commons.utils.Rnd;
+import com.aionemu.gameserver.ai.poll.AIQuestion;
+import com.aionemu.gameserver.configs.main.CustomConfig;
+import com.aionemu.gameserver.controllers.attack.AttackResult;
+import com.aionemu.gameserver.controllers.effect.CumulativeResistType;
+import com.aionemu.gameserver.controllers.observer.OneTimeBoostSkillAttack;
+import com.aionemu.gameserver.dataholders.DataManager;
+import com.aionemu.gameserver.model.SkillElement;
+import com.aionemu.gameserver.model.gameobjects.Creature;
+import com.aionemu.gameserver.model.gameobjects.Npc;
+import com.aionemu.gameserver.model.gameobjects.Summon;
+import com.aionemu.gameserver.model.gameobjects.player.Player;
+import com.aionemu.gameserver.model.stats.container.StatEnum;
+import com.aionemu.gameserver.model.templates.npc.NpcTemplate;
+import com.aionemu.gameserver.skillengine.change.Change;
+import com.aionemu.gameserver.skillengine.condition.Conditions;
+import com.aionemu.gameserver.skillengine.effect.modifier.ActionModifier;
+import com.aionemu.gameserver.skillengine.effect.modifier.ActionModifiers;
+import com.aionemu.gameserver.skillengine.model.*;
+import com.aionemu.gameserver.utils.stats.StatFunctions;
+
+/**
+ * @author ATracer
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "Effect")
+public abstract class EffectTemplate {
+
+	protected ActionModifiers modifiers;
+	protected List<Change> change;
+	@XmlAttribute
+	protected int effectid;
+	@XmlAttribute(required = true)
+	protected int duration2;
+	@XmlAttribute
+	protected int duration1;
+	@XmlAttribute(name = "randomtime")
+	protected int randomTime;
+	@XmlAttribute(name = "e")
+	protected int position;
+	@XmlAttribute(name = "basiclvl")
+	protected int basicLvl;
+	@XmlAttribute(name = "hittype")
+	protected HitType hitType = HitType.EVERYHIT;
+	@XmlAttribute(name = "hittypeprob2")
+	protected int hitTypeProb = 100;
+	@XmlAttribute(name = "element")
+	protected SkillElement element = SkillElement.NONE;
+	@XmlElement(name = "subeffect")
+	protected SubEffect subEffect;
+	@XmlElement(name = "conditions")
+	protected Conditions effectConditions;
+	@XmlElement(name = "subconditions")
+	protected Conditions effectSubConditions;
+	@XmlAttribute(name = "hoptype")
+	protected HopType hopType;
+	@XmlAttribute(name = "hopa")
+	protected int hopA; // effects the aggro-value (hate)
+	@XmlAttribute(name = "hopb")
+	protected int hopB; // effects the aggro-value (hate)
+	@XmlAttribute(name = "noresist")
+	protected boolean noResist;
+	@XmlAttribute(name = "accmod1")
+	protected int accMod1;// accdelta
+	@XmlAttribute(name = "accmod2")
+	protected int accMod2;// accvalue
+	@XmlAttribute(name = "preeffect")
+	protected int[] preEffects;
+	@XmlAttribute(name = "preeffect_prob")
+	protected int preEffectProb = 100;
+	@XmlAttribute(name = "critprobmod1")
+	protected int critProbMod1 = 0;
+	@XmlAttribute(name = "critprobmod2")
+	protected int critProbMod2 = 100;
+	@XmlAttribute(name = "critadddmg1")
+	protected int critAddDmg1 = 0;
+	@XmlAttribute(name = "critadddmg2")
+	protected int critAddDmg2 = 0;
+
+	@XmlAttribute
+	protected int value;
+	@XmlAttribute
+	protected int delta;
+	@XmlAttribute(name = "skill_efficiency")
+	protected int skillEfficiency;
+	@XmlAttribute(name = "max_damage_chance")
+	protected int maxDamageChance;
+	@XmlAttribute(name = "max_damage_delta")
+	protected int maxDamageDelta;
+
+	/**
+	 * @return the value
+	 */
+	public int getValue() {
+		return value;
+	}
+
+	/**
+	 * @return the delta
+	 */
+	public int getDelta() {
+		return delta;
+	}
+
+	/**
+	 * @return the duration2
+	 */
+	public int getDuration2() {
+		return duration2;
+	}
+
+	/**
+	 * @return the duration1
+	 */
+	public int getDuration1() {
+		return duration1;
+	}
+
+	/**
+	 * @return the randomtime
+	 */
+	public int getRandomTime() {
+		return randomTime;
+	}
+
+	/**
+	 * @return the modifiers
+	 */
+	public ActionModifiers getModifiers() {
+		return modifiers;
+	}
+
+	/**
+	 * @return the change
+	 */
+	public List<Change> getChange() {
+		return change;
+	}
+
+	/**
+	 * @return the effectid
+	 */
+	public int getEffectId() {
+		return effectid;
+	}
+
+	/**
+	 * @return the position
+	 */
+	public int getPosition() {
+		return position;
+	}
+
+	/**
+	 * @return the basicLvl
+	 */
+	public int getBasicLvl() {
+		return basicLvl;
+	}
+
+	/**
+	 * @return the element
+	 */
+	public SkillElement getElement() {
+		return element;
+	}
+
+	/**
+	 * @return the preEffectProb
+	 */
+	public int getPreEffectProb() {
+		return preEffectProb;
+	}
+
+	private int[] getPreEffects() {
+		return preEffects;
+	}
+
+	public boolean isNoResist() {
+		return noResist;
+	}
+
+	void setNoResist(boolean noResist) {
+		this.noResist = noResist;
+	}
+
+	/**
+	 * @return the critAddDmg1
+	 */
+	public int getCritAddDmg1() {
+		return critAddDmg1;
+	}
+
+	/**
+	 * @return the critAddDmg2
+	 */
+	public int getCritAddDmg2() {
+		return critAddDmg2;
+	}
+
+	/**
+	 * Gets the effect conditions status
+	 * 
+	 * @return list of Conditions for effect template
+	 */
+	public Conditions getEffectConditions() {
+		return effectConditions;
+	}
+
+	/**
+	 * Gets the sub effect conditions status
+	 * 
+	 * @return list of Conditions for sub effects within effect template
+	 */
+	public Conditions getEffectSubConditions() {
+		return effectSubConditions;
+	}
+
+	public ActionModifier getActionModifiers(Effect effect) {
+		if (modifiers == null)
+			return null;
+
+		// Only one of modifiers will be applied now
+		for (ActionModifier modifier : modifiers.getActionModifiers()) {
+			if (modifier.check(effect))
+				return modifier;
+		}
+
+		return null;
+	}
+
+	/**
+	 * @return the subEffect
+	 */
+	public SubEffect getSubEffect() {
+		return subEffect;
+	}
+
+	/**
+	 * @return the accMod1
+	 */
+	public int getAccMod1() {
+		return accMod1;
+	}
+
+	/**
+	 * @return the accMod2
+	 */
+	public int getAccMod2() {
+		return accMod2;
+	}
+
+	/**
+	 * @return the base value (damage, heal, etc.) according to the skill template, it should equal the value stated in the skill description
+	 */
+	protected int calculateBaseValue(Effect effect) {
+		return value + delta * effect.getSkillLevel();
+	}
+
+	public int calculateCritAddDmg(Effect effect) {
+		return critAddDmg2 + critAddDmg1 * effect.getSkillLevel();
+	}
+
+	public int calculateCritProbMod(Effect effect) {
+		return critProbMod2 + critProbMod1 * effect.getSkillLevel();
+	}
+
+	/**
+	 * Calculate effect result
+	 *
+	 * @param effect
+	 */
+	public void calculate(Effect effect) {
+		calculate(effect, null, null, element);
+	}
+
+	public boolean calculate(Effect effect, StatEnum statEnum, SpellStatus spellStatus) {
+		return calculate(effect, statEnum, spellStatus, element);
+	}
+
+	/**
+	 * 1) check conditions 2) check preeffect 3) check effectresistrate 4) check noresist 5) decide if its magical or physical effect 6) physical -
+	 * check cannotmiss 7) check magic resist / dodge 8) addsuccess exceptions: buffbind buffsilence buffsleep buffstun randommoveloc recallinstant
+	 * returneffect returnpoint shieldeffect signeteffect summoneffect xpboosteffect
+	 * 
+	 * @param effect
+	 * @param statEnum
+	 * @param spellStatus
+	 */
+	public boolean calculate(Effect effect, StatEnum statEnum, SpellStatus spellStatus, SkillElement element) {
+		if (effect.getSkillTemplate().isPassive()) {
+			this.addSuccessEffect(effect, spellStatus);
+			return true;
+		}
+
+		if (statEnum != null && isAlteredState(statEnum) && isImmuneToAbnormal(effect, statEnum)) {
+			return false;
+		}
+
+		boolean isForcedEffect = effect.isForcedEffect();
+		if (!isForcedEffect && (!validateEffectConditions(effect) || !validatePreEffects(effect))) {
+			effect.resetMagicalCritical(); // a filtered out effect breaks the chain, so the next position rolls its own critical
+			return false;
+		}
+		resolveMagicalCritical(effect);
+		if (!isForcedEffect && isDodgedOrResisted(effect, statEnum)) {
+			if (getPosition() != 1 && !(effect.effectInPos(1) instanceof DamageEffect))
+				effect.getSuccessEffects().clear();
+			return false;
+		}
+		addSuccessEffect(effect, spellStatus);
+		calculateDamage(effect);
+		return true;
+	}
+
+	/**
+	 * Rolls or takes over the magical critical for this effect position. Called before the resist check, so even resisted effects can decide the
+	 * critical of the following positions.
+	 */
+	protected void resolveMagicalCritical(Effect effect) {
+	}
+
+	private boolean validateEffectConditions(Effect effect) {
+		return effectConditions == null || effectConditions.validate(effect);
+	}
+
+	private boolean validatePreEffects(Effect effect) {
+		if (getPreEffects() != null) {
+			for (int position : getPreEffects()) {
+				if (!effect.isInSuccessEffects(position))
+					return false;
+			}
+			if (Rnd.chance() >= getPreEffectProb())
+				return false;
+		}
+		return true;
+	}
+
+	protected boolean isDodgedOrResisted(Effect effect, StatEnum statEnum) {
+		if (effect.isSubEffect()) {
+			return !checkEffectResistRate(effect, statEnum) || (!isNoResist() && !checkDodgeOrResistRate(effect));
+		} else {
+			return !isNoResist() && (!checkEffectResistRate(effect, statEnum) || !checkDodgeOrResistRate(effect));
+		}
+	}
+
+	/**
+	 * @return true = no dodge/resist, false = dodged/resisted
+	 */
+	private boolean checkDodgeOrResistRate(Effect effect) {
+		Creature effector = effect.getEffector();
+		int accuracyModifier = accMod2 + accMod1 * effect.getSkillLevel() + effect.getAccModBoost();
+		if (effect.getSkillTemplate().getSubType() == SkillSubType.DEBUFF)
+			accuracyModifier += effector.getGameStats().getStat(StatEnum.BOOST_RESIST_DEBUFF, 0).getCurrent();
+		OneTimeBoostSkillAttack boost = OneTimeBoostSkillAttackEffect.getActiveBoost(effector, this);
+		if (element == SkillElement.NONE) {
+			if (boost != null)
+				accuracyModifier += boost.calculatePhysicalAccuracyBonus(effector.getGameStats().getMainHandPAccuracy());
+			return !StatFunctions.checkIsDodgedHit(effector, effect.getEffected(), accuracyModifier);
+		}
+		return Rnd.get(1, 1000) > StatFunctions.calculateMagicalResistRate(effector, effect.getEffected(), accuracyModifier, element, boost);
+	}
+
+	private void addSuccessEffect(Effect effect, SpellStatus spellStatus) {
+		effect.addSuccessEffect(this);
+		if (spellStatus != null)
+			effect.setSpellStatus(spellStatus);
+	}
+
+	/**
+	 * Apply effect to effected
+	 * 
+	 * @param effect
+	 */
+	public abstract void applyEffect(Effect effect);
+
+	/**
+	 * Start effect on effected
+	 * 
+	 * @param effect
+	 */
+	public void startEffect(Effect effect) {
+	}
+
+	public void calculateDamage(Effect effect) {
+		// evaluate skill reflect for non-dmg skills
+		AttackResult attackResult = new AttackResult(0, effect.getAttackStatus(), hitType);
+		effect.getEffected().getObserveController().checkShieldStatus(Collections.singletonList(attackResult), effect, effect.getEffector(),
+			ShieldType.SKILL_REFLECTOR);
+		if (attackResult.getShieldType() != 0) {
+			effect.setShieldDefense(effect.getShieldDefense() | attackResult.getShieldType());
+			effect.setReflectedSkillId(attackResult.getReflectedSkillId());
+		}
+	}
+
+	/**
+	 * @param effect
+	 */
+	public void calculateSubEffect(Effect effect) {
+		if (subEffect == null)
+			return;
+		ActionModifiers mod = this.getModifiers();
+		if (mod != null) {
+			ActionModifier modifier = this.getActionModifiers(effect);
+			if (modifier == null) {
+				return;
+			}
+		}
+		// Pre-Check for sub effect conditions
+		if (!effectSubConditionsCheck(effect)) {
+			effect.setSubEffectAborted(true);
+			return;
+		}
+
+		// chance to trigger subeffect
+		if (Rnd.chance() >= subEffect.getChance())
+			return;
+
+		SkillTemplate template = DataManager.SKILL_DATA.getSkillTemplate(subEffect.getSkillId());
+		int level = 1;
+		int accBoost = effect.getAccModBoost();
+		if (subEffect.isAddEffect()) { // Only used by signet bursts
+			level = effect.getSignetBurstedCount();
+			accBoost = Short.MAX_VALUE; // sub effects cannot be resisted by magic resist in case of signet bursts
+		}
+		Effect newEffect = new Effect(effect.getEffector(), effect.getOriginalEffected(), template, level, null, effect.getForceType(), true, null);
+		newEffect.setShieldDefense(effect.getShieldDefense());
+		newEffect.setAccModBoost(accBoost);
+		newEffect.initialize();
+		if (newEffect.getSpellStatus() != SpellStatus.DODGE && newEffect.getSpellStatus() != SpellStatus.RESIST)
+			effect.setSpellStatus(newEffect.getSpellStatus());
+		effect.setSubEffect(newEffect);
+		effect.setSubEffectType(newEffect.getSubEffectType());
+		effect.setTargetLoc(newEffect.getTargetX(), newEffect.getTargetY(), newEffect.getTargetZ());
+	}
+
+	/**
+	 * Check all sub effect condition statuses for effect
+	 */
+	private boolean effectSubConditionsCheck(Effect effect) {
+		return effectSubConditions == null || effectSubConditions.validate(effect);
+	}
+
+	@SuppressWarnings("fallthrough")
+	public int calculateHate(Effect effect) {
+		if (hopType != null) {
+			int hate = 0;
+			switch (hopType) {
+				case DAMAGE:
+					hate = effect.getReserveds(0).getValue();
+				case SKILLLV:
+					int skillLvl = effect.getSkillLevel();
+					hate += hopB + hopA * skillLvl; // Aggro-value of the effect
+					break;
+				default:
+					throw new UnsupportedOperationException("Unhandled effect type " + hopType + " for hate calculation");
+			}
+			return Math.max(1, hate);
+		}
+		return 0;
+	}
+
+	public void startSubEffect(Effect effect) {
+		if (subEffect == null)
+			return;
+		// Apply-Check for sub effect conditions
+		if (effect.isSubEffectAbortedBySubConditions())
+			return;
+		if (effect.getSubEffect() != null)
+			effect.getSubEffect().applyEffect();
+	}
+
+	/**
+	 * Do periodic effect on effected
+	 * 
+	 * @param effect
+	 */
+	public void onPeriodicAction(Effect effect) {
+	}
+
+	/**
+	 * End effect on effected
+	 * 
+	 * @param effect
+	 */
+	public void endEffect(Effect effect) {
+	}
+
+	/**
+	 * @return true = no resist, false = resisted
+	 */
+	@SuppressWarnings("lossy-conversions")
+	public boolean checkEffectResistRate(Effect effect, StatEnum statEnum) {
+		if (statEnum == null)
+			return true;
+
+		Creature effected = effect.getEffected();
+		Creature effector = effect.getEffector();
+
+		if (effected == null || effected.getGameStats() == null || effector == null || effector.getGameStats() == null)
+			return false;
+
+		// Stun like effects cannot be applied as long as a shield is active
+		if (isProtectedByShield(effected, statEnum))
+			return false;
+
+		int effectPower = 1000;
+
+		if (isAlteredState(statEnum))
+			effectPower -= effected.getGameStats().getAbnormalResistance().getCurrent();
+
+		// effect resistance
+		effectPower -= effected.getGameStats().getResistance(statEnum).getCurrent();
+
+		// calculate cumulative resist chance for fear, sleep and paralyze if effector and effected are players
+		boolean isEffectorPlayer = (CustomConfig.COUNT_SUMMON_EFFECTS_FOR_CUMULATIVE_RESIST ? effector.getMaster() : effector) instanceof Player;
+		if (isEffectorPlayer && effected instanceof Player player)
+			effectPower -= player.getEffectController().getCumulativeResistance(CumulativeResistType.get(statEnum));
+
+		// penetration
+		StatEnum penetrationStat = this.getPenetrationStat(statEnum);
+		if (penetrationStat != null)
+			effectPower += effector.getGameStats().getStat(penetrationStat, 0).getCurrent();
+
+		// resist mod
+		if (effectPower > 0 && effector.isPvpTarget(effected)) { // pvp
+			int lvlDiff = effected.getLevel() - effector.getLevel();
+			if (lvlDiff > 4) {
+				float reductionRate = 0.1f * (lvlDiff - 4); // see https://forums.aiononline.com/topic/25-arena-of-discipline-entries/?page=2#elComment_2213
+				effectPower *= Math.max(1 - reductionRate, 0.1f);
+			}
+		}
+		return Rnd.get(1, 1000) <= effectPower;
+	}
+
+	private boolean isImmuneToAbnormal(Effect effect, StatEnum statEnum) {
+		Creature effected = effect.getEffected();
+		if (effected != effect.getEffector()) {
+			if (effected instanceof Npc || effected instanceof Summon) {
+				if (effected.getAi().ask(AIQuestion.IS_IMMUNE_TO_ABNORMAL_STATES))
+					return true;
+				if (((NpcTemplate) effected.getObjectTemplate()).getStatsTemplate().getRunSpeed() == 0)
+					return statEnum == StatEnum.PULLED_RESISTANCE || statEnum == StatEnum.STAGGER_RESISTANCE || statEnum == StatEnum.STUMBLE_RESISTANCE;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @return true = it's an altered state effect, false = it is Poison/Bleed dot (normal Dots have statEnum null here)
+	 */
+	private boolean isAlteredState(StatEnum stat) {
+		return switch (stat) {
+			case BLEED_RESISTANCE, POISON_RESISTANCE -> false;
+			default -> true;
+		};
+	}
+
+	private boolean isProtectedByShield(Creature effected, StatEnum stat) {
+		return switch (stat) {
+			case STUMBLE_RESISTANCE, OPENAERIAL_RESISTANCE, SPIN_RESISTANCE, STAGGER_RESISTANCE -> effected.getEffectController().isUnderNormalShield();
+			default -> false;
+		};
+	}
+
+	private StatEnum getPenetrationStat(StatEnum statEnum) {
+		StatEnum toReturn = null;
+		try {
+			toReturn = StatEnum.valueOf(statEnum.toString() + "_PENETRATION");
+		} catch (Exception e) {
+			LoggerFactory.getLogger(EffectTemplate.class).warn("Missing statenum penetration for " + statEnum.toString());
+		}
+		return toReturn;
+	}
+}

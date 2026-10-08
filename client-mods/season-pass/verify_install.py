@@ -15,6 +15,9 @@ def main():
     if source==out or source in out.parents:raise ValueError('Test output must be outside the installed client')
     shutil.copytree(package,prepared)
     for rel in {e['path'] for e in m['files']+m['preservedFiles']}:
+        if not (source/rel).is_file():
+            assert any(e['path']==rel and e['original'] is None for e in m['files']),rel
+            continue
         target=clone/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source/rel,target)
     m['clientRoot']=str(clone);(prepared/'manifest.json').write_text(json.dumps(m,indent=2))
     command=[shutil.which('pwsh') or 'powershell.exe','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File']
@@ -28,10 +31,12 @@ def main():
     run('install.ps1','-PreparedPath',prepared,ok=False)
     backups=list((clone/'SeasonPass-backups').iterdir());assert len(backups)==1
     run('restore.ps1','-BackupPath',backups[0])
-    for e in m['files']:assert sha((clone/e['path']).read_bytes())==e['original'],e['path']
+    for e in m['files']:
+        assert (not (clone/e['path']).exists()) if e['original'] is None else sha((clone/e['path']).read_bytes())==e['original'],e['path']
     # A changed prepared DLL is rejected before any replacement occurs.
     dll=prepared/'bin64/Game.dll';data=bytearray(dll.read_bytes());data[-1]^=1;dll.write_bytes(data)
     run('install.ps1','-PreparedPath',prepared,ok=False)
-    for e in m['files']:assert sha((clone/e['path']).read_bytes())==e['original'],e['path']
+    for e in m['files']:
+        assert (not (clone/e['path']).exists()) if e['original'] is None else sha((clone/e['path']).read_bytes())==e['original'],e['path']
     print('OK: real PowerShell install, preserved files, repeated-install rejection, byte-exact restore and tamper rejection. Installed client untouched.')
 if __name__=='__main__':main()

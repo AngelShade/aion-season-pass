@@ -1,0 +1,55 @@
+package com.aionemu.gameserver.configs.main;
+
+import java.io.File;
+import java.util.Set;
+
+import com.aionemu.commons.configuration.Property;
+import com.aionemu.gameserver.model.templates.npc.NpcRating;
+
+public class InstanceConfig {
+
+	@Property(key = "gameserver.instance.cooldown_rate", defaultValue = "1")
+	public static int INSTANCE_COOLDOWN_RATE;
+
+	@Property(key = "gameserver.instance.cooldown_rate.excluded_maps", defaultValue = "")
+	public static Set<Integer> INSTANCE_COOLDOWN_RATE_EXCLUDED_MAPS;
+
+	@Property(key = "gameserver.instance.destroy_delay_seconds", defaultValue = "600")
+	public static int INSTANCE_DESTROY_DELAY_SECONDS;
+
+	@Property(key = "gameserver.instance.solo.destroy_delay_seconds", defaultValue = "600")
+	public static int SOLO_INSTANCE_DESTROY_DELAY_SECONDS;
+
+	@Property(key = "gameserver.instance.duel.enable", defaultValue = "true")
+	public static boolean INSTANCE_DUEL_ENABLE;
+
+	@Property(key = "gameserver.instance.scaling.enable", defaultValue = "false")
+	public static boolean INSTANCE_SCALING_ENABLE;
+
+	@Property(key = "gameserver.instance.scaling.max_level_diff", defaultValue = "5")
+	public static int INSTANCE_SCALING_MAX_LEVEL_DIFF;
+
+	@Property(key = "gameserver.instance.scaling.npc_min_rating", defaultValue = "ELITE")
+	public static NpcRating INSTANCE_SCALING_NPC_MIN_RATING;
+
+	@Property(key = "gameserver.instance.scaling.hp_scale_factor", defaultValue = "0.75")
+	public static float INSTANCE_SCALING_HP_SCALE_FACTOR;
+
+	@Property(key = "gameserver.instance.scaling.hp_floor", defaultValue = "0.5")
+	public static float INSTANCE_SCALING_HP_FLOOR;
+
+	@Property(key = "gameserver.instance.scaling.dmg_scale_factor", defaultValue = "0.5")
+	public static float INSTANCE_SCALING_DMG_SCALE_FACTOR;
+
+	@Property(key = "gameserver.instance.scaling.dmg_floor", defaultValue = "0.75")
+	public static float INSTANCE_SCALING_DMG_FLOOR;
+
+	@Property(key = "gameserver.instance.scaling.excluded_maps", defaultValue = "")
+	public static Set<Integer> INSTANCE_SCALING_EXCLUDED_MAPS;
+
+	/**
+	 * Location of instance *.java handlers
+	 */
+	@Property(key = "gameserver.instance.handler_directory", defaultValue = "./data/handlers/instance")
+	public static File HANDLER_DIRECTORY;
+}

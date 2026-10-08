@@ -1,43 +1,34 @@
-# Remote player network setup
+# Remote player setup
 
-The Season Pass is server-managed. Its HTML and API are rendered by each player's in-game browser, which runs on that player's own PC. Therefore a loopback URL such as `127.0.0.1` reaches the player's PC, not the GameServer. For remote players, use a public DNS name with a valid TLS certificate.
+GameServer owns each character's pass state. The native browser runs on the player's PC and connects to the server's common HTTPS address.
 
-## Keep the application listener private
+1. Configure `config/season-pass/season.properties` on the server:
 
-In `config/main/gameserver.properties`, retain:
+   ```properties
+   http.enabled=true
+   http.bind=127.0.0.1
+   http.port=8091
+   ```
 
-```properties
-gameserver.marketplace.enable = true
-gameserver.marketplace.bind = 127.0.0.1
-gameserver.marketplace.port = 8091
-```
+2. Keep other listeners off on that port. The included Central Market listener defaults to disabled. If another local service uses 8091, select a free port for this listener and update the reverse proxy.
+3. Configure a public hostname and valid TLS certificate. Publish the pass through a reverse proxy to the private loopback listener. Example Nginx locations inside your TLS virtual host:
 
-Do not expose port 8091 directly to the Internet. Put a TLS reverse proxy on the GameServer host and publish only `/market/pass` and `/market/pass/` to the local listener. Preserve the incoming `Host` and `Origin` headers. Example Nginx locations inside the TLS virtual host:
+   ```nginx
+   location = /market/pass {
+       proxy_pass http://127.0.0.1:8091;
+       proxy_set_header Host $http_host;
+       proxy_set_header Origin $http_origin;
+   }
+   location ^~ /market/pass/ {
+       proxy_pass http://127.0.0.1:8091;
+       proxy_set_header Host $http_host;
+       proxy_set_header Origin $http_origin;
+   }
+   ```
 
-```nginx
-location = /market/pass {
-    proxy_pass http://127.0.0.1:8091;
-    proxy_set_header Host $host;
-    proxy_set_header Origin $http_origin;
-}
+4. Build each supported original client with `--server-url https://your.actual.hostname`. The exact origin is embedded in the browser authentication allowlist, Lua menu and native icon bridge. Explicit default ports are normalized; non-default ports must agree with your proxy and public URL.
+5. Install the prepared package, log into the game and open `/seasonpass`. The native game security token authenticates the current online character; players do not enter a separate website password.
 
-location ^~ /market/pass/ {
-    proxy_pass http://127.0.0.1:8091;
-    proxy_set_header Host $host;
-    proxy_set_header Origin $http_origin;
-}
-```
+Only loopback may use plain HTTP. A loopback address reaches the player's own PC, so remote players must use the public HTTPS origin. Keep port 8091 private and permit inbound HTTPS to the proxy. An anonymous state/action request returns 403 as expected.
 
-Configure a valid certificate for the same DNS name and allow inbound HTTPS (normally port 443) in the host firewall. Keep HTTP redirected to HTTPS at the proxy. Do not set a public marketplace bind address or forward port 8091 from the router.
-
-## Build the matching player patch
-
-From the operator's supported client build, prepare the incremental patch with the public HTTPS origin:
-
-```powershell
-python client-mods/season-pass/prepare.py --client "C:\Aion 4.8 NA" --output "C:\Aion-SeasonPass-Staged" --server-url "https://play.example.com"
-```
-
-Replace the example with the operator's actual origin. The builder rejects remote plain HTTP. The generated native hook only recognizes the exact pass URL and preserves the existing local routes for the other installed windows. Give players the same origin so their in-game browser reaches the server. Do not upload the prepared directory: it contains client files copied from one installation. Share this source repository and let each player stage the patch locally.
-
-Each player must already have the supported Aetherfall client browser integration. This package does not install the server feature, configure DNS/TLS, or provide a generic vanilla-client conversion.
+Item icon URLs are fulfilled inside the native client from its unchanged Items.pak. No extracted icon PNGs or client archives need to be hosted. Share this source release; each recipient prepares a patch using their own original client files.

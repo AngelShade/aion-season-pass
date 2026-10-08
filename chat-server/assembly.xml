@@ -1,0 +1,39 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+	<id>dist</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<fileSets>
+		<fileSet>
+			<outputDirectory>./</outputDirectory>
+			<includes>
+				<include>config/**/*</include>
+				<include>data/**/*</include>
+			</includes>
+			<excludes>
+				<exclude>config/mycs.properties</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>dist</directory>
+			<outputDirectory>./</outputDirectory>
+			<includes>
+				<include>*.sh</include>
+			</includes>
+			<fileMode>0744</fileMode><!-- include linux scripts with executable file permission -->
+		</fileSet>
+		<fileSet>
+			<directory>dist</directory>
+			<outputDirectory>./</outputDirectory>
+			<includes>
+				<include>*.*</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>libs</outputDirectory>
+		</dependencySet>
+	</dependencySets>
+</assembly>

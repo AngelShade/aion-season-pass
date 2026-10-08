@@ -11,7 +11,7 @@ if "%SERVER%"=="" goto failed
 if "%STAGED%"=="" goto failed
 where python >nul 2>nul
 if errorlevel 1 (
-  echo Python 3.10 or newer is required.
+  echo Python 3.12 or newer is required.
   goto failed
 )
 python -c "import PIL" >nul 2>nul
@@ -26,6 +26,8 @@ if errorlevel 1 (
 )
 python "%~dp0client-mods\season-pass\prepare.py" --client "%CLIENT%" --output "%STAGED%" --server-url "%SERVER%"
 if errorlevel 1 goto failed
+python "%~dp0client-mods\season-pass\verify_package.py" "%STAGED%"
+if errorlevel 1 goto failed
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0client-mods\season-pass\install.ps1" -PreparedPath "%STAGED%"
 if errorlevel 1 goto failed
 echo.
@@ -37,3 +39,5 @@ echo.
 echo Installation stopped. Check the error above; preserve any backup path printed by the installer.
 pause
 exit /b 1
+
+

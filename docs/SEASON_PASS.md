@@ -1,6 +1,6 @@
 # Aetherfall Season Pass
 
-Ascendant Dawn is Aetherfall's character-owned 30-level season. The revised window uses a full-window illustrated celestial scene behind every page, transparent content panels, detailed metal reward frames, illustrated cyan/violet pass crests, portrait purchase frames, chapter navigation, featured finale rewards, a daily/weekly/season mission board, purchase confirmations and claim history. Server ID 1 was verified as **Aetherfall** in the installed English `ui/serverlist.xml`. Open the outlined gold ticket directly above Central Market, **Additional Functions → Aetherfall Season Pass**, or enter `/seasonpass`. The window uses the existing verified full-screen native Market browser and close control; opening Central Market restores its title.
+Ascendant Dawn is Aetherfall's character-owned 30-level season. The revised window uses a full-window illustrated celestial scene behind every page, transparent content panels, detailed metal reward frames, illustrated cyan/violet pass crests, portrait purchase frames, chapter navigation, featured finale rewards, a daily/weekly/season mission board, purchase confirmations and claim history. Open the outlined gold ticket beside the stock Shop button, **Additional Functions → Aetherfall Season Pass**, or enter `/seasonpass`. The client builder supplies a full-window native browser and close control.
 
 | Pass | Kinah from character Inventory | Included |
 | --- | ---: | --- |
@@ -29,68 +29,22 @@ Browser mutations require an online account session and a connection-bound reque
 
 ## Configuration and next season
 
-`game-server/config/season-pass/season.properties` defines the season ID, server name, title, timezone, dates, XP curve, prices and boost. `missions.tsv` defines targets, cadence and XP. `rewards.tsv` defines exact items and quantities; its optional seventh field is `NONE`, `NORMAL`, `GREATER` or `MAJOR` for native class bundle resolution. Class bundles specify the Gladiator base ID and resolve to the character's advanced class at preview and claim time. Base-class claims wait for ascension. `schema.sql` creates five InnoDB tables automatically when the marketplace starts. The feature requires the existing marketplace listener to be enabled. Artwork prompts are recorded in `client-mods/season-pass/ARTWORK.md`. Item icons remain native client artwork.
+`game-server/config/season-pass/season.properties` defines the season ID, server name, title, timezone, dates, XP curve, prices and boost. `missions.tsv` defines targets, cadence and XP. `rewards.tsv` defines exact items and quantities; its optional seventh field is `NONE`, `NORMAL`, `GREATER` or `MAJOR` for native class bundle resolution. Class bundles specify the Gladiator base ID and resolve to the character's advanced class at preview and claim time. Base-class claims wait for ascension. `schema.sql` creates five InnoDB tables automatically when the pass listener starts. The feature has its own authenticated HTTP listener; configure http.enabled, http.bind and http.port in season.properties. Artwork prompts are recorded in `client-mods/season-pass/ARTWORK.md`. Item icons remain native client artwork.
 
 Keep published reward slots and economics stable under an existing season ID. To schedule a new season, wait until the prior claim grace period has finished, configure a **new unique ID**, update missions/rewards and restart GameServer. Historical progress, claims and receipts remain in SQL. This version serves one configured season at a time; it does not provide a multi-season archive window or an administrator editor. Do not replace the active configuration during its claim period. No automatic next season is currently configured.
 
-## Remote players and the in-game browser
+## Server and client setup
 
-Pass progress, purchases and claims are stored on the GameServer for each character. The in-game window is a browser running on each player's PC, so its page URL must reach the server over the network. `127.0.0.1` works only when that player also runs GameServer on the same PC.
+Use the root README's Build-Server.ps1, Install-Server.ps1 and standalone client preparation commands. All required browser, signing, HUD, item-icon and server source dependencies are included.
 
-For remote players, keep `gameserver.marketplace.bind = 127.0.0.1` and put an HTTPS reverse proxy on the server host. Publish only `/market/pass` and `/market/pass/` through the proxy to `http://127.0.0.1:8091`; keep port 8091 private. Preserve the incoming `Host` header and forward the normal `Origin` header. The Java handler accepts an HTTP or HTTPS Origin only when its authority matches `Host`. Do not expose the session-bearing HTTP endpoint directly to the Internet.
+Keep the pass listener on loopback. For players on another PC, configure the common public HTTPS origin using docs/REMOTE_SETUP.md and pass it to the client builder. No separate website account is needed; the native browser authenticates the character already online in Aion.
 
-Build each client's patch with the same public HTTPS origin, for example:
+Configuration uses http.enabled, http.bind and http.port in season.properties. The included Central Market listener defaults to disabled and must not occupy the pass port. To use both listeners, give them different local ports and configure your reverse proxy accordingly.
 
-```powershell
-python client-mods/season-pass/prepare.py --client "C:\Aion 4.8 NA" --output "C:\Aion-SeasonPass-Staged" --server-url "https://play.example.com"
-```
+Client installation creates a verified SeasonPass-backups directory. Close Aion before installing or restoring, and restore later patches first. Server distribution installation targets a new directory; keep private database settings in config/mygs.properties and retain database backups containing the five season_pass_* tables together with players, inventory and mail.
 
-Install the resulting client patch with `client-mods/season-pass/install.ps1`. The player keeps their own Aion archives and signing material; do not upload a complete game client or a prepared client snapshot. Each player installs the patch once. Their character progress and rewards remain server-side.
+## Checks
 
-## Build, installation and rollback
+The source includes SeasonPassCheck (rules, rewards, anonymous HTTP and isolated database transactions), SeasonPassMediaCheck (production asset bytes and allowed routes), and verify_rewards.py (native reward and class bundle data). verify_package.py verifies the complete native client package; verify_install.py exercises its installer and restore on a disposable copy.
 
-1. Package the server from the repository root with `mvn -pl game-server -am -DskipTests "-Dassembly.skipAssembly=true" package`.
-2. Stage the incremental client package with `python client-mods/season-pass/prepare.py --client "<Aion 4.8 NA>" --output "<new staging directory>"`.
-3. Run the checks below. Fully close Aion normally and wait for zero online players before a graceful GameServer stop.
-4. Stage a fresh server bundle with `python client-mods/season-pass/stage_server.py`. Run `client-mods/season-pass/install_server.ps1 -PreparedPath "output/season-pass/server-v9"`. The guarded installer verifies original/dependency hashes, backs up the deployed JAR and box definitions, then installs the JAR, season configuration/artwork and restored `decomposable_items.xml`. A failed installation restores its backup. A running GameServer is rejected.
-5. Run `client-mods/season-pass/install.ps1 -PreparedPath "<prepared client directory>"`. Source/staged hashes and preserved files are checked before copying. A running client is rejected, and failed installation restores its backup.
-6. Restart GameServer, check for `Season pass 2026-autumn ready`, and reopen Aion. Open `/seasonpass`, verify gameplay mission credit, an explicitly chosen purchase and a real claimed attachment. Also check Inventory, Central Market, Wardrobe, Additional Functions and a summoned pet.
-
-The client patch changes the two existing browser/authentication code caves, menu registration/signatures and native ticket shortcut resources. The existing Market extension also handles the ticket click and placement; no additional executable hook is introduced. It retains all other installed executable hooks and preserves unrelated archive entries, including inventory, warehouse, speech, cursor, graphics and pet validation. Graphics/cursor backup baselines and launcher guards are composed with the new browser routes. Removing an earlier Market/Speech patch requires restoring this later Season Pass patch first; those earlier recovery receipts are left intact.
-
-Use `client-mods/season-pass/restore.ps1 -BackupPath "<SeasonPass-backups/timestamp>"` with Aion closed to restore the exact prior client files. A later patch must be removed first. Client rollback does not revoke purchases, restore spent Kinah or delete reward/progression SQL. Keep pass data during server upgrades and include it in database backups.
-
-## Verification
-
-`SeasonPassCheck` verifies the curve, deadlines, DST resets, free/paid claim gates, differential upgrades and capped boosts, plus all 90 rewards against actual server templates and matching client icon metadata. With a deployment directory argument, it runs purchase/claim/mission/rival/receipt tests inside a **new empty MariaDB schema**, copies table structure only, then drops that test schema. It never changes live character data.
-
-```powershell
-javac -encoding UTF-8 -cp "game-server/target/classes;target-deploy/game-server/libs/*" -d output/season-pass/check-classes game-server/test/com/aionemu/gameserver/services/SeasonPassCheck.java
-java -cp "output/season-pass/check-classes;game-server/target/classes;target-deploy/game-server/libs/*" com.aionemu.gameserver.services.SeasonPassCheck target-deploy/game-server
-python client-mods/transmog-menu/tests/verify_market_browser.py --season-pass
-python client-mods/transmog-menu/tests/verify_market_viewport.py
-python client-mods/season-pass/verify_package.py <prepared-directory>
-python client-mods/season-pass/verify_browser.py --browser-bin "<client>/bin64"
-javac -encoding UTF-8 -cp "game-server/target/classes;target-deploy/game-server/libs/*" -d output/season-pass/check-classes game-server/test/com/aionemu/gameserver/services/SeasonPassMediaCheck.java
-Push-Location game-server
-java -cp "../output/season-pass/check-classes;target/classes;../target-deploy/game-server/libs/*" com.aionemu.gameserver.services.SeasonPassMediaCheck
-Pop-Location
-```
-
-The native browser test executes real mouse clicks in Aion's Awesomium/WebKit, at 768, 1024, 1366, 1920 and 3440 pixels wide. It covers native icons, reward pages, confirmations, free claims, purchases, upgrade pricing, boosts, mission filters and claim-all/history. Screenshots go to `output/playwright/season-pass`. Its purchases and progress are isolated fixture data. It does not establish a real in-game purchase or mission acceptance.
-
-The revised build passed 551 rules/catalog/isolated MariaDB/anonymous HTTP checks, 4,289 reward/box checks, 11 production artwork-route checks and all five native-browser viewport scenarios, including the 14-choice Mythic reward preview. The client-v4 ticket package passed hash/archive/RSA checks and a real installer/restore/tamper check on a disposable client copy. The native HUD hooks and compiled callback passed ticket/Market/Shop dispatch, unrelated-click passthrough and both HUD placements at four UI scales. Artwork checks wait for all rendered assets and verify that each purchase frame belongs to its own card. Installed bundles are `output/season-pass/client-v4` and `output/season-pass/server-v9.zip`; earlier server bundles are superseded. Server-v9 includes sixteen restored native box definitions and records original/dependency hashes, checked before installation. Restoration passed 7,792 exhaustive data checks and 13,439 native schema/JAXB/weighted-opening checks. See [box restoration evidence](RESTORED_REWARD_BOXES.md).
-
-The server installer also passed installation, backup, changed-dependency rejection, later-file protection and injected-failure rollback checks on disposable deployment copies (`verify_server_install.ps1`). The sixteen restored box definitions are already live, and one of each was mailed to Baby with persisted attachments verified. In-game visual, hover, click, purchase and mission acceptance remain player checks; isolated checks do not establish those live interactions.
-
-## Installed on 3 October 2026
-
-After the user confirmed Aion was closed, client-v4 was installed with a verified backup at `SeasonPass-backups/20261003-070627-453` inside the client directory. All twenty installed files and all preserved files passed hash verification. The actual installed English localization entry is `STR_PRIVATE_SEASON_PASS_HUD` → **Aetherfall Season Pass**, referenced by the ticket in both HUD layouts. `verify_installed.py` verifies this directly from the installed archives.
-
-Server-v9 supersedes all earlier full-build server bundles. It compiles only the three pass services and eight gameplay/HTTP hook source files against the deployed runtime, then composes those classes into the deployed JAR. Its verifier checks that changed shared methods contain pass hooks and that 3,296 unrelated JAR entries remain byte-for-byte unchanged. AFK, market, wardrobe, skill and journey classes outside that scope are preserved, including the original JAR manifest. The incremental JAR passed the 551 isolated rules/database checks and installer/backup/guard/failure-rollback checks before installation.
-
-World and database online-player counts were both zero before native graceful shutdown. Server-v9 was installed with a backup at `target-deploy/game-server/backups/season-pass-20261003-071608-546`; GameServer was started normally as a hidden process. Logs are `target-deploy/game-server/season-pass-20261003.stdout.log` and `.stderr.log`. No live purchase, Kinah debit or automatic reward claim was performed.
-
-Post-start verification confirmed `Season pass 2026-autumn ready: 30 levels, 17 missions, 90 rewards`, game port 7777, the private marketplace listener and connections to LoginServer/ChatServer. The live pass HTML, CSS, JavaScript and five artwork files match the deployed files exactly over HTTP. Anonymous pass state correctly returns 403. Existing Market, Wardrobe and Journey pages return 200; the Shop retains its login-required 403 response to anonymous requests. The running pass reports the configured Aetherfall name, dates and prices. All sixteen Baby test-mail attachments remained persisted with quantity one and mailbox location 127 after restart. Receipt: `output/season-pass/deploy-ready-20261003.txt`. Actual in-game hover/click/visual acceptance remains for the player after reopening Aion.
-
-The user subsequently requested visible CMD windows for GameServer launches. Use `target-deploy/game-server/start-visible.cmd` in a normal visible CMD window for subsequent starts; its packaged source is `game-server/dist/start-visible.cmd`. When GameServer is already listening on 7777, this launcher shows the live server log and does not start another JVM or restart the server. When the port is free, it runs GameServer interactively in that CMD console, retaining the ordinary restart exit-code behavior. A visible live-log window was opened for the already-running server.
+Perform in-game acceptance on the recipient's deployment: native menu and ticket, reward icons/tooltips, daily/weekly/season progress, purchases, claim-all, Black Cloud mail, reconnect persistence and stock pets. Starting a server or hashing files alone does not establish those game interactions.

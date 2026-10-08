@@ -1,0 +1,465 @@
+package com.aionemu.gameserver.ai;
+
+import java.util.Objects;
+
+import com.aionemu.commons.utils.Rnd;
+import com.aionemu.gameserver.ai.event.AIEventLog;
+import com.aionemu.gameserver.ai.event.AIEventType;
+import com.aionemu.gameserver.ai.handler.FreezeEventHandler;
+import com.aionemu.gameserver.configs.main.AIConfig;
+import com.aionemu.gameserver.controllers.attack.AggroTarget;
+import com.aionemu.gameserver.geoEngine.math.Vector3f;
+import com.aionemu.gameserver.model.animations.AttackHandAnimation;
+import com.aionemu.gameserver.model.animations.AttackTypeAnimation;
+import com.aionemu.gameserver.model.gameobjects.Creature;
+import com.aionemu.gameserver.model.gameobjects.VisibleObject;
+import com.aionemu.gameserver.model.gameobjects.player.Player;
+import com.aionemu.gameserver.model.stats.calc.Stat2;
+import com.aionemu.gameserver.model.templates.item.ItemAttackType;
+import com.aionemu.gameserver.model.templates.npcshout.ShoutEventType;
+import com.aionemu.gameserver.model.templates.spawns.SpawnTemplate;
+import com.aionemu.gameserver.skillengine.model.Effect;
+import com.aionemu.gameserver.spawnengine.SpawnEngine;
+import com.aionemu.gameserver.world.WorldPosition;
+import com.aionemu.gameserver.world.geo.GeoService;
+
+/**
+ * @author ATracer
+ */
+public abstract class AbstractAI<T extends Creature> implements AI {
+
+	private static final ThreadLocal<Integer> DEPTH = ThreadLocal.withInitial(() -> 0);
+
+	private final T owner;
+	private AIState currentState;
+	private AISubState currentSubState;
+	private boolean thinking;
+
+	private boolean logging = false;
+
+	private volatile AIEventLog eventLog;
+
+	protected AbstractAI(T owner) {
+		this.owner = owner;
+		this.currentState = AIState.CREATED;
+		this.currentSubState = AISubState.NONE;
+	}
+
+	public AIEventLog getEventLog() {
+		return eventLog;
+	}
+
+	@Override
+	public AIState getState() {
+		return currentState;
+	}
+
+	public final boolean isInState(AIState state) {
+		return currentState == state;
+	}
+
+	@Override
+	public AISubState getSubState() {
+		return currentSubState;
+	}
+
+	public final boolean isInSubState(AISubState subState) {
+		return currentSubState == subState;
+	}
+
+	@Override
+	public String getName() {
+		AIName annotation = getClass().getAnnotation(AIName.class);
+		return annotation == null ? "noname" : annotation.value();
+	}
+
+	protected boolean canHandleEvent(AIEventType eventType) {
+		switch (eventType) {
+			case CREATURE_MOVED:
+			case DIALOG_START:
+			case DIALOG_FINISH:
+				return currentState == AIState.IDLE || currentState == AIState.WALKING;
+		}
+		return true;
+	}
+
+	public synchronized boolean setStateIfNot(AIState newState) {
+		if (this.currentState == newState)
+			return false;
+
+		if (isLogging()) {
+			AILogger.info(this, "Setting AI state to " + newState);
+			if (this.currentState == AIState.DIED && newState == AIState.FIGHT) {
+				StackTraceElement[] stack = new Throwable().getStackTrace();
+				for (StackTraceElement elem : stack)
+					AILogger.info(this, elem.toString());
+			}
+		}
+		this.currentState = newState;
+		return true;
+	}
+
+	public synchronized boolean setSubStateIfNot(AISubState newSubState) {
+		if (this.currentSubState == newSubState) {
+			if (isLogging()) {
+				AILogger.info(this, "Can't change substate to " + newSubState + " from " + currentSubState);
+			}
+			return false;
+		}
+		if (isLogging()) {
+			AILogger.info(this, "Setting AI substate to " + newSubState);
+		}
+		this.currentSubState = newSubState;
+		return true;
+	}
+
+	@Override
+	public final void onGeneralEvent(AIEventType event) {
+		if (currentState.canHandle(event) && canHandleEvent(event)) {
+			if (isLogging()) {
+				AILogger.info(this, "General event " + event);
+			}
+			handleGeneralEvent(event);
+		}
+	}
+
+	@Override
+	public final void onCreatureEvent(AIEventType event, Creature creature) {
+		Objects.requireNonNull(creature, "Creature must not be null");
+		if (currentState.canHandle(event) && canHandleEvent(event)) {
+			if (isLogging()) {
+				AILogger.info(this, "Creature event " + event + ": " + creature.getObjectTemplate().getTemplateId());
+			}
+			try {
+				int depth = DEPTH.get();
+				if (depth > 20)
+					throw new StackOverflowError(
+						"Aborted abnormal AI event recursion for " + owner + " with AIEventType." + event + " and target: " + creature + ", most hated: "
+							+ owner.getAggroList().getTarget(AggroTarget.MOST_HATED));
+				DEPTH.set(depth + 1);
+				handleCreatureEvent(event, creature);
+			} finally {
+				DEPTH.set(0);
+			}
+		}
+	}
+
+	@Override
+	public final void onCustomEvent(int eventId, Object... args) {
+		if (isLogging()) {
+			AILogger.info(this, "Custom event - id = " + eventId);
+		}
+		handleCustomEvent(eventId, args);
+	}
+
+	/**
+	 * Will be hidden for all AI's below NpcAI
+	 * 
+	 * @return
+	 */
+	public T getOwner() {
+		return owner;
+	}
+
+	public int getObjectId() {
+		return owner.getObjectId();
+	}
+
+	public WorldPosition getPosition() {
+		return owner.getPosition();
+	}
+
+	public VisibleObject getTarget() {
+		return owner.getTarget();
+	}
+
+	public boolean isDead() {
+		return owner.isDead();
+	}
+
+	public synchronized final boolean setThinking() {
+		if (thinking)
+			return false;
+		return thinking = true;
+	}
+
+	public synchronized final void unsetThinking() {
+		thinking = false;
+	}
+
+	@Override
+	public final boolean isLogging() {
+		return logging;
+	}
+
+	public void setLogging(boolean logging) {
+		this.logging = logging;
+	}
+
+	protected abstract void handleActivate();
+
+	protected abstract void handleDeactivate();
+
+	protected abstract void handleBeforeSpawned();
+
+	protected abstract void handleSpawned();
+
+	protected abstract void handleDespawned();
+
+	protected abstract void handleDied();
+
+	protected abstract void handleMoveValidate();
+
+	protected abstract void handleMoveArrived();
+
+	protected abstract void handleAttackComplete();
+
+	protected abstract void handleFinishAttack();
+
+	protected abstract void handleTargetTooFar();
+
+	protected abstract void handleTargetGiveup();
+
+	protected abstract void handleNotAtHome();
+
+	protected abstract void handleBackHome();
+
+	protected abstract void handleDropRegistered();
+
+	protected abstract void handleAttack(Creature creature);
+
+	protected abstract void creatureNeedsHelp(Creature creature);
+
+	protected abstract boolean handleCreatureNeedsSupport(Creature creature);
+
+	protected abstract boolean handleCreatureNeedsSupportByGuard(Creature creature);
+
+	protected abstract void handleCreatureSee(Creature creature);
+
+	protected abstract void handleCreatureNotSee(Creature creature);
+
+	protected abstract void handleCreatureMoved(Creature creature);
+
+	protected abstract void handleCreatureAggro(Creature creature);
+
+	protected abstract void handleTargetChanged(Creature creature);
+
+	protected abstract void handleFollowMe(Creature creature);
+
+	protected abstract void handleStopFollowMe(Creature creature);
+
+	protected abstract void handleDialogStart(Player player);
+
+	protected abstract void handleDialogFinish(Player player);
+
+	protected abstract void handleCustomEvent(int eventId, Object... args);
+
+	public abstract boolean onPatternShout(ShoutEventType event, String pattern, int skillNumber);
+
+	protected void handleGeneralEvent(AIEventType event) {
+		if (isLogging()) {
+			AILogger.info(this, "Handle general event " + event);
+		}
+		logEvent(event);
+
+		switch (event) {
+			case MOVE_VALIDATE:
+				handleMoveValidate();
+				break;
+			case MOVE_ARRIVED:
+				handleMoveArrived();
+				break;
+			case SPAWNED:
+				handleSpawned();
+				break;
+			case BEFORE_SPAWNED:
+				handleBeforeSpawned();
+				break;
+			case DESPAWNED:
+				handleDespawned();
+				break;
+			case DIED:
+				handleDied();
+				break;
+			case ATTACK_COMPLETE:
+				handleAttackComplete();
+				break;
+			case ATTACK_FINISH:
+				handleFinishAttack();
+				break;
+			case TARGET_TOOFAR:
+				handleTargetTooFar();
+				break;
+			case TARGET_GIVEUP:
+				handleTargetGiveup();
+				break;
+			case NOT_AT_HOME:
+				handleNotAtHome();
+				break;
+			case BACK_HOME:
+				handleBackHome();
+				break;
+			case ACTIVATE:
+				handleActivate();
+				break;
+			case DEACTIVATE:
+				handleDeactivate();
+				break;
+			case FREEZE:
+				FreezeEventHandler.onFreeze(this);
+				break;
+			case UNFREEZE:
+				FreezeEventHandler.onUnfreeze(this);
+				break;
+			case DROP_REGISTERED:
+				handleDropRegistered();
+				break;
+		}
+	}
+
+	protected void logEvent(AIEventType event) {
+		if (AIConfig.EVENT_DEBUG) {
+			if (eventLog == null) {
+				synchronized (this) {
+					if (eventLog == null) {
+						eventLog = new AIEventLog(10);
+					}
+				}
+			}
+			eventLog.addFirst(event);
+		}
+	}
+
+	private void handleCreatureEvent(AIEventType event, Creature creature) {
+		switch (event) {
+			case ATTACK:
+				handleAttack(creature);
+				logEvent(event);
+				break;
+			case CREATURE_NEEDS_SUPPORT:
+				if (!handleCreatureNeedsSupport(creature))
+					handleCreatureNeedsSupportByGuard(creature);
+				logEvent(event);
+				break;
+			case CREATURE_NEEDS_HELP:
+				creatureNeedsHelp(creature);
+				break;
+			case CREATURE_SEE:
+				handleCreatureSee(creature);
+				break;
+			case CREATURE_NOT_SEE:
+				handleCreatureNotSee(creature);
+				break;
+			case CREATURE_MOVED:
+				handleCreatureMoved(creature);
+				break;
+			case CREATURE_AGGRO:
+				handleCreatureAggro(creature);
+				logEvent(event);
+				break;
+			case TARGET_CHANGED:
+				handleTargetChanged(creature);
+				break;
+			case FOLLOW_ME:
+				handleFollowMe(creature);
+				logEvent(event);
+				break;
+			case STOP_FOLLOW_ME:
+				handleStopFollowMe(creature);
+				logEvent(event);
+				break;
+			case DIALOG_START:
+				handleDialogStart((Player) creature);
+				logEvent(event);
+				break;
+			case DIALOG_FINISH:
+				handleDialogFinish((Player) creature);
+				logEvent(event);
+				break;
+		}
+	}
+
+	public abstract AttackIntention chooseAttackIntention();
+
+	@Override
+	public boolean onDialogSelect(Player player, int dialogActionId, int questId, int extendedRewardIndex) {
+		return false;
+	}
+
+	/**
+	 * Spawn object in the same world and instance as AI's owner
+	 */
+	protected final VisibleObject spawn(int npcId, float x, float y, float z, byte heading) {
+		return spawn(npcId, x, y, z, heading, 0);
+	}
+
+	/**
+	 * Spawn object with staticId in the same world and instance as AI's owner
+	 */
+	protected final VisibleObject spawn(int npcId, float x, float y, float z, byte heading, int staticId) {
+		return spawn(npcId, x, y, z, heading, staticId, null);
+	}
+
+	protected final VisibleObject spawn(int npcId, float x, float y, float z, byte heading, int staticId, String aiName) {
+		SpawnTemplate template = SpawnEngine.newSingleTimeSpawn(owner.getWorldId(), npcId, x, y, z, heading, owner, aiName);
+		template.setStaticId(staticId);
+		return SpawnEngine.spawnObject(template, owner.getInstanceId());
+	}
+
+	protected final VisibleObject rndSpawnInRange(int npcId, float distance) {
+		double angleRadians = Math.toRadians(Rnd.nextFloat(360f));
+		WorldPosition p = getPosition();
+		float x = p.getX() + (float) (Math.cos(angleRadians) * distance);
+		float y = p.getY() + (float) (Math.sin(angleRadians) * distance);
+		Vector3f pos = GeoService.getInstance().getClosestCollision(owner, x, y, p.getZ());
+		return spawn(npcId, pos.getX(), pos.getY(), pos.getZ(), p.getHeading());
+	}
+
+	protected final VisibleObject rndSpawnInRange(int npcId, float minDistance, float maxDistance) {
+		return rndSpawnInRange(npcId, Rnd.nextFloat(minDistance, maxDistance));
+	}
+
+	@Override
+	public float modifyDamage(Creature attacker, float damage, Effect effect) {
+		return damage;
+	}
+
+	@Override
+	public float modifyOwnerDamage(float damage, Creature effected, Effect effect) {
+		return damage;
+	}
+
+	@Override
+	public void modifyOwnerStat(Stat2 stat) {
+	}
+
+	@Override
+	public ItemAttackType modifyAttackType(ItemAttackType type) {
+		return type;
+	}
+
+	@Override
+	public int modifyAggroRange(int value) {
+		return value;
+	}
+
+	@Override
+	public int modifyAggroAngle(int value) {
+		return value;
+	}
+
+	@Override
+	public AttackHandAnimation modifyAttackHandAnimation(AttackHandAnimation attackHandAnimation) {
+		return attackHandAnimation;
+	}
+
+	@Override
+	public AttackTypeAnimation getAttackTypeAnimation(Creature target) {
+		return AttackTypeAnimation.MELEE;
+	}
+
+	@Override
+	public int modifyInitialSkillDelay(int delay) {
+		return delay;
+	}
+}
