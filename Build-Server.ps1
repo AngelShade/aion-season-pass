@@ -13,4 +13,10 @@ $archive=Join-Path $output 'game-server/game-server.zip'
 if(-not (Test-Path -LiteralPath $archive)){throw 'Server distribution was not produced.'}
 $hash=(Get-FileHash -Algorithm SHA256 -LiteralPath $archive).Hash.ToLowerInvariant()
 Set-Content -LiteralPath ($archive+'.sha256') -Encoding ascii -Value ($hash+'  '+[IO.Path]::GetFileName($archive))
+$integration=@{
+ version=1
+ archiveSha256=$hash
+ sourceManifestSha256=(Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $source 'tools/modules/source-baseline.json')).Hash.ToLowerInvariant()
+}
+$integration | ConvertTo-Json | Set-Content -LiteralPath ($archive+'.modules.json') -Encoding ascii
 Write-Output "OK: complete server distribution built: $archive"

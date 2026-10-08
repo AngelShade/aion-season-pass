@@ -2,6 +2,8 @@
 
 This repository includes one combined server/client profile for Season Pass, Central Market, Wardrobe, Skip Poeta/Ishalgen Journey, and Inventory/Warehouse Expansion. Use this profile when combining these releases.
 
+To select modules individually and add them in any order, use each repository's `Install-Module.ps1`. It retains previous selections on the same clean-source/server/client installation. See [individual module installation](INDIVIDUAL_MODULES.md). The all-five profile below remains available.
+
 ## Server operator
 
 Build once and install into a new server folder:
@@ -81,7 +83,7 @@ Preparation recognizes hash-matching receipts from the published Season Pass, Ma
 
 Private graphics, companion or other custom native integrations are outside this published profile. Preserve those customized clients rather than installing this profile over them.
 
-Do **not** run the separate standalone installers after installing this combined profile. Use the combined builder for subsequent updates. The client installer backs up all replaced files and the combined receipt; its printed `SeasonPass-backups` path supports exact restoration to the previous installation:
+Use `Install-Module.ps1` or the combined builder for subsequent updates. The older isolated standalone installers must not be run over this cumulative profile. The client installer backs up all replaced files and the combined receipt; its printed backup path supports exact restoration to the previous installation:
 
 ```powershell
 ./client-mods/season-pass/restore.ps1 -BackupPath '<printed backup path>'

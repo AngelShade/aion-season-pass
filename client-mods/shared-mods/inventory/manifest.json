@@ -34,5 +34,10 @@
   "characterWarehouseSlots": 360,
   "accountWarehouseSlots": 540,
   "inventoryWarehouseDllSha256": "3a60729e01ea8d6d44e9797fd41a2134a2cee4c07f96b9d9564d2ba8611e6967",
-  "inventoryWarehouseDetachedDllSha256": "53f50fcd11e1b4b50221775cc95dd0f0ff1964466fa702580774d260d155c045"
+  "inventoryWarehouseDetachedDllSha256": "53f50fcd11e1b4b50221775cc95dd0f0ff1964466fa702580774d260d155c045",
+  "upstreamCommit": "267ce6033f39e8d297d2ac2657e5a6e930723578",
+  "sourceBaselines": [
+    "clean-upstream",
+    "legacy-solo-reference"
+  ]
 }

@@ -1,0 +1,133 @@
+diff --git a/game-server/src/com/aionemu/gameserver/configs/main/CustomConfig.java b/game-server/src/com/aionemu/gameserver/configs/main/CustomConfig.java
+--- a/game-server/src/com/aionemu/gameserver/configs/main/CustomConfig.java
++++ b/game-server/src/com/aionemu/gameserver/configs/main/CustomConfig.java
+@@ -100,6 +100,14 @@
+ 	 */
+ 	@Property(key = "gameserver.cube.expansion_limit", defaultValue = "11")
+ 	public static int CUBE_EXPANSION_LIMIT;
++
++	/** Requires the matching 4.8 NA native inventory client patch. */
++	@Property(key = "gameserver.inventory.unified", defaultValue = "false")
++	public static boolean UNIFIED_INVENTORY;
++
++	public static final int UNIFIED_INVENTORY_SLOTS = 180;
++	/** Native inventory patch reserves 279 cells: 180 base plus eleven nine-slot expansions. */
++	public static final int UNIFIED_INVENTORY_MAX_EXPANSIONS = 11;
+ 
+ 	/**
+ 	 * Npc Cube Expands limit size
+diff --git a/game-server/src/com/aionemu/gameserver/model/gameobjects/player/Player.java b/game-server/src/com/aionemu/gameserver/model/gameobjects/player/Player.java
+--- a/game-server/src/com/aionemu/gameserver/model/gameobjects/player/Player.java
++++ b/game-server/src/com/aionemu/gameserver/model/gameobjects/player/Player.java
+@@ -8,6 +8,7 @@
+ import java.util.concurrent.ConcurrentHashMap;
+ 
+ import com.aionemu.gameserver.configs.administration.AdminConfig;
++import com.aionemu.gameserver.configs.main.CustomConfig;
+ import com.aionemu.gameserver.configs.main.SecurityConfig;
+ import com.aionemu.gameserver.controllers.FlyController;
+ import com.aionemu.gameserver.controllers.PlayerController;
+@@ -425,7 +426,13 @@
+ 	}
+ 
+ 	public void setCubeLimit() {
+-		getInventory().setLimit(StorageType.CUBE.getLimit() + (getNpcExpands() + getQuestExpands() + getItemExpands()) * getInventory().getRowLength());
++		int expansions = getNpcExpands() + getQuestExpands() + getItemExpands();
++		int base = StorageType.CUBE.getLimit();
++		if (CustomConfig.UNIFIED_INVENTORY) {
++			base = CustomConfig.UNIFIED_INVENTORY_SLOTS;
++			expansions = Math.max(0, Math.min(expansions, CustomConfig.UNIFIED_INVENTORY_MAX_EXPANSIONS));
++		}
++		getInventory().setLimit(base + expansions * getInventory().getRowLength());
+ 	}
+ 
+ 	public PlayerClass getPlayerClass() {
+diff --git a/game-server/src/com/aionemu/gameserver/model/templates/item/actions/ExpandInventoryAction.java b/game-server/src/com/aionemu/gameserver/model/templates/item/actions/ExpandInventoryAction.java
+--- a/game-server/src/com/aionemu/gameserver/model/templates/item/actions/ExpandInventoryAction.java
++++ b/game-server/src/com/aionemu/gameserver/model/templates/item/actions/ExpandInventoryAction.java
+@@ -36,6 +36,9 @@
+ 
+ 	@Override
+ 	public void act(Player player, Item parentItem, Item targetItem, Object... params) {
++		// Capacity can change during the item-use delay. Never consume a ticket at the limit.
++		if (storage == StorageType.CUBE && !canAct(player, parentItem, targetItem, params))
++			return;
+ 		if (!player.getInventory().decreaseByObjectId(parentItem.getObjectId(), 1))
+ 			return;
+ 		ItemTemplate itemTemplate = parentItem.getItemTemplate();
+diff --git a/game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_CUBE_UPDATE.java b/game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_CUBE_UPDATE.java
+--- a/game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_CUBE_UPDATE.java
++++ b/game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_CUBE_UPDATE.java
+@@ -1,5 +1,6 @@
+ package com.aionemu.gameserver.network.aion.serverpackets;
+ 
++import com.aionemu.gameserver.configs.main.CustomConfig;
+ import com.aionemu.gameserver.model.gameobjects.player.Player;
+ import com.aionemu.gameserver.model.items.storage.StorageType;
+ import com.aionemu.gameserver.network.aion.AionConnection;
+@@ -37,6 +38,11 @@
+ 				npcExpands = player.getNpcExpands();
+ 				questExpands = player.getQuestExpands();
+ 				itemExpands = player.getItemExpands();
++				if (CustomConfig.UNIFIED_INVENTORY) {
++					// Include base slots and earned expansions in the existing nine-slot protocol.
++					npcExpands = questExpands = 0;
++					itemExpands = (player.getInventory().getLimit() - StorageType.CUBE.getLimit()) / type.getLength();
++				}
+ 				break;
+ 			case REGULAR_WAREHOUSE:
+ 				itemsCount = player.getWarehouse().size();
+diff --git a/game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_INVENTORY_INFO.java b/game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_INVENTORY_INFO.java
+--- a/game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_INVENTORY_INFO.java
++++ b/game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_INVENTORY_INFO.java
+@@ -3,8 +3,10 @@
+ import java.util.Collections;
+ import java.util.List;
+ 
++import com.aionemu.gameserver.configs.main.CustomConfig;
+ import com.aionemu.gameserver.model.gameobjects.Item;
+ import com.aionemu.gameserver.model.gameobjects.player.Player;
++import com.aionemu.gameserver.model.items.storage.StorageType;
+ import com.aionemu.gameserver.model.templates.item.ItemTemplate;
+ import com.aionemu.gameserver.network.aion.AionConnection;
+ import com.aionemu.gameserver.network.aion.AionServerPacket;
+@@ -32,11 +34,12 @@
+ 	@Override
+ 	protected void writeImpl(AionConnection con) {
+ 
+-		// something wrong with cube part.
+ 		writeC(isFirstPacket ? 1 : 0);
+-		writeC(player.getNpcExpands()); // cube size from npc (so max 5 for now)
+-		writeC(player.getQuestExpands()); // cube size from quest (so max 2 for now)
+-		writeC(player.getItemExpands()); // count of ticket expands
++		// Login must advertise the same capacity as SM_CUBE_UPDATE.
++		writeC(CustomConfig.UNIFIED_INVENTORY ? 0 : player.getNpcExpands());
++		writeC(CustomConfig.UNIFIED_INVENTORY ? 0 : player.getQuestExpands());
++		writeC(CustomConfig.UNIFIED_INVENTORY ? (player.getInventory().getLimit() - StorageType.CUBE.getLimit()) / StorageType.CUBE.getLength()
++			: player.getItemExpands());
+ 		writeH(items.size()); // number of entries
+ 		for (Item item : items)
+ 			writeItemInfo(item);
+diff --git a/game-server/src/com/aionemu/gameserver/services/CubeExpandService.java b/game-server/src/com/aionemu/gameserver/services/CubeExpandService.java
+--- a/game-server/src/com/aionemu/gameserver/services/CubeExpandService.java
++++ b/game-server/src/com/aionemu/gameserver/services/CubeExpandService.java
+@@ -51,6 +51,8 @@
+ 
+ 			@Override
+ 			public void acceptRequest(Npc requester, Player responder) {
++				if (!canExpand(responder))
++					return;
+ 				if (responder.getInventory().tryDecreaseKinah(price, ItemUpdateType.DEC_KINAH_CUBE))
+ 					npcExpand(responder);
+ 				else
+@@ -115,7 +117,9 @@
+ 		int newExpansions = player.getNpcExpands() + player.getQuestExpands() + player.getItemExpands() + 1;
+ 		if (newExpansions < 0)
+ 			return false;
+-		if (newExpansions > CustomConfig.CUBE_EXPANSION_LIMIT) {
++		int expansionLimit = CustomConfig.UNIFIED_INVENTORY
++			? Math.min(CustomConfig.CUBE_EXPANSION_LIMIT, CustomConfig.UNIFIED_INVENTORY_MAX_EXPANSIONS) : CustomConfig.CUBE_EXPANSION_LIMIT;
++		if (newExpansions > expansionLimit) {
+ 			PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_EXTEND_INVENTORY_CANT_EXTEND_MORE());
+ 			return false;
+ 		}

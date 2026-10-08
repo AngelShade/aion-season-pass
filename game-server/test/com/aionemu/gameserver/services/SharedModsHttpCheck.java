@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpServer;
 /** Exercise all production routes on one isolated loopback socket, without GameServer startup. */
 public final class SharedModsHttpCheck {
     public static void main(String[] args) throws Exception {
+        com.aionemu.gameserver.configs.main.CustomConfig.ENABLE_POETA_JOURNEY = true;
         var server=HttpServer.create(new InetSocketAddress("127.0.0.1",0),0);
         SharedModsHttpService.routes(server);server.start();int checks=0;
         try(var client=HttpClient.newHttpClient()) {

@@ -15,15 +15,19 @@ public final class SharedModsHttpService {
     private static HttpServer listener;
     private SharedModsHttpService() {}
     static void routes(HttpServer server) {
-        server.createContext("/market", CentralMarketHttpService::handle);
-        server.createContext("/market/wardrobe", WardrobeHttpService::handle);
-        server.createContext("/market/pass", SeasonPassHttpService::handle);
-        server.createContext("/journey", PoetaJourneyHttpService::handle);
+        server.createContext("/market", selected(CustomConfig.SHARED_MODS_MARKET, CentralMarketHttpService::handle));
+        server.createContext("/market/wardrobe", selected(CustomConfig.SHARED_MODS_WARDROBE, WardrobeHttpService::handle));
+        server.createContext("/market/pass", selected(CustomConfig.SHARED_MODS_PASS, SeasonPassHttpService::handle));
+        server.createContext("/journey", selected(CustomConfig.ENABLE_POETA_JOURNEY, PoetaJourneyHttpService::handle));
+    }
+    private static com.sun.net.httpserver.HttpHandler selected(boolean enabled, com.sun.net.httpserver.HttpHandler handler) {
+        return enabled ? handler : exchange -> { exchange.sendResponseHeaders(404, -1); exchange.close(); };
     }
     public static synchronized void start() throws Exception {
         if (listener != null) throw new IllegalStateException("Shared mod listener already started");
-        if (!CustomConfig.UNIFIED_INVENTORY || !CustomConfig.EXPANDED_WAREHOUSES || !CustomConfig.ENABLE_POETA_JOURNEY)
-            throw new IllegalStateException("Enable the matching shared Inventory/Warehouse and Journey server settings");
+        if (CustomConfig.UNIFIED_INVENTORY != CustomConfig.EXPANDED_WAREHOUSES)
+            throw new IllegalStateException("Enable Inventory and Warehouse settings together with the matching client");
+        if (CustomConfig.ENABLE_POETA_JOURNEY)
         for (String name : new String[]{"poeta.jpg", "sanctum.jpg", "ishalgen.jpg", "pandaemonium.jpg"})
             if (!Files.isRegularFile(Path.of("config/journey/media", name)))
                 throw new IllegalStateException("Copy the combined client builder's Journey artwork to config/journey/media: " + name);
@@ -34,14 +38,18 @@ public final class SharedModsHttpService {
         if (!InetAddress.getByName(bind).isLoopbackAddress()) throw new IllegalArgumentException("Bind the shared listener to loopback behind HTTPS");
         HttpServer server = HttpServer.create(new InetSocketAddress(bind, port), 16);
         try {
-            CentralMarketService.start();
-            WardrobeService.start();
-            PoetaJourneyService.start();
-            SeasonPassService.start();
+            if (CustomConfig.SHARED_MODS_MARKET || CustomConfig.SHARED_MODS_WARDROBE || CustomConfig.SHARED_MODS_PASS)
+                CentralMarketHttpService.loadIcons();
+            if (CustomConfig.SHARED_MODS_MARKET) CentralMarketService.start();
+            if (CustomConfig.SHARED_MODS_WARDROBE) WardrobeService.start();
+            if (CustomConfig.ENABLE_POETA_JOURNEY) PoetaJourneyService.start();
+            if (CustomConfig.SHARED_MODS_PASS) SeasonPassService.start();
             routes(server);
             server.setExecutor(ThreadPoolManager.getInstance());
             server.start(); listener = server;
-            LoggerFactory.getLogger(SharedModsHttpService.class).info("Shared mod listener ready on {}:{}: Market, Wardrobe, Season Pass and Journey", bind, port);
+            LoggerFactory.getLogger(SharedModsHttpService.class).info("Shared mod listener ready on {}:{}; Market={}, Wardrobe={}, Pass={}, Journey={}",
+                bind, port, CustomConfig.SHARED_MODS_MARKET, CustomConfig.SHARED_MODS_WARDROBE,
+                CustomConfig.SHARED_MODS_PASS, CustomConfig.ENABLE_POETA_JOURNEY);
         } catch (Exception error) { server.stop(0); SeasonPassService.stop(); throw error; }
     }
     public static synchronized void stop() {

@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$PreparedPath)
+param([Parameter(Mandatory=$true)][string]$PreparedPath,[string]$BackupRoot)
 $ErrorActionPreference='Stop'
 $prepared=(Resolve-Path -LiteralPath $PreparedPath).Path
 $manifest=Get-Content -Raw -LiteralPath (Join-Path $prepared 'manifest.json') | ConvertFrom-Json
@@ -21,7 +21,11 @@ foreach($e in $manifest.files){
  elseif((Get-FileHash -LiteralPath $target).Hash -ne $e.original){throw "Client changed: $($e.path)"}
 }
 foreach($e in $manifest.preservedFiles){if((Get-FileHash -LiteralPath (Join-Path $client $e.path)).Hash -ne $e.sha256){throw "Preserved file changed: $($e.path)"}}
-$backup=Join-Path $client ('SeasonPass-backups/'+(Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
+if($BackupRoot){
+ $recovery=[IO.Path]::GetFullPath($BackupRoot).TrimEnd('\')
+ if($recovery -eq $client -or $recovery.StartsWith($client+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Choose an external recovery folder.'}
+ $backup=Join-Path $recovery ('module-'+(Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
+}else{$backup=Join-Path $client ('SeasonPass-backups/'+(Get-Date -Format 'yyyyMMdd-HHmmss-fff'))}
 New-Item -ItemType Directory -Path $backup | Out-Null
 foreach($e in $manifest.files){
  if($null -eq $e.original){continue}
@@ -30,7 +34,8 @@ foreach($e in $manifest.files){
  Copy-Item -LiteralPath (Join-Path $client $e.path) -Destination $saved
  if((Get-FileHash -LiteralPath $saved).Hash -ne $e.original){throw 'Backup verification failed.'}
 }
-Copy-Item -LiteralPath (Join-Path $prepared 'manifest.json') -Destination (Join-Path $backup 'manifest.json')
+$manifest | Add-Member -NotePropertyName recoveryPath -NotePropertyValue $backup -Force
+$manifest | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath (Join-Path $backup 'manifest.json') -Encoding utf8
 try{
  foreach($e in $manifest.files | Sort-Object { $_.path -eq 'bin64/Game.dll' }){
   $target=Join-Path $client $e.path

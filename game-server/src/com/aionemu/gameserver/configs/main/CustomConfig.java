@@ -9,6 +9,12 @@ import com.aionemu.commons.configuration.Property;
 public class CustomConfig {
 	@Property(key = "gameserver.sharedmods.enable", defaultValue = "false")
 	public static boolean ENABLE_SHARED_MODS;
+	@Property(key = "gameserver.sharedmods.market", defaultValue = "true")
+	public static boolean SHARED_MODS_MARKET = true;
+	@Property(key = "gameserver.sharedmods.wardrobe", defaultValue = "true")
+	public static boolean SHARED_MODS_WARDROBE = true;
+	@Property(key = "gameserver.sharedmods.pass", defaultValue = "true")
+	public static boolean SHARED_MODS_PASS = true;
 	@Property(key = "gameserver.poeta.journey.enable", defaultValue = "false")
 	public static boolean ENABLE_POETA_JOURNEY;
 

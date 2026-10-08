@@ -259,8 +259,12 @@ def git_apply(root, patch, check=False, reverse=False):
 
 def apply_server(root):
     require_install_root(root, 'server')
-    patches = [KIT / 'server' / name for name in ('inventory-only.patch', 'warehouse-expansion.patch')]
     before = {p: rooted(root, p).read_bytes() for p in SOURCE_FILES + [CONFIG]}
+    # The old reference includes Solo RPG starting-tier changes absent upstream.
+    # Keep its patch for existing installs; clean upstream needs no login/creation edits.
+    customized = b'setWhNpcExpands(6)' in before[SOURCE_FILES[7]]
+    inventory_patch = 'inventory-only.patch' if customized else 'inventory-upstream.patch'
+    patches = [KIT / 'server' / name for name in (inventory_patch, 'warehouse-expansion.patch')]
     # Obtain the exact resulting files in an isolated source fixture before touching the real source.
     with tempfile.TemporaryDirectory(prefix='inventory-server-') as temporary:
         fixture = Path(temporary)

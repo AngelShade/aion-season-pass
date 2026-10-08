@@ -26,7 +26,7 @@ class StoragePackage(unittest.TestCase):
         self.root = base / 'source'
         self.kit = base / 'kit'
         (self.kit / 'server').mkdir(parents=True)
-        for name in ['inventory-only.patch', 'warehouse-expansion.patch']:
+        for name in ['inventory-only.patch', 'inventory-upstream.patch', 'warehouse-expansion.patch']:
             shutil.copyfile(PACKAGE / 'server' / name, self.kit / 'server' / name)
         for name, data in BASELINE.items():
             target = self.root / name
@@ -54,7 +54,8 @@ class StoragePackage(unittest.TestCase):
         self.assertEqual(self.contents(), before)
 
     def test_upgrade_inventory_only(self):
-        result = tool.git_apply(self.root, self.kit / 'server/inventory-only.patch')
+        name = 'inventory-only.patch' if b'setWhNpcExpands(6)' in BASELINE[tool.SOURCE_FILES[7]] else 'inventory-upstream.patch'
+        result = tool.git_apply(self.root, self.kit / 'server' / name)
         self.assertEqual(result.returncode, 0, result.stderr)
         before = self.contents()
         tool.apply_server(self.root)
@@ -96,7 +97,8 @@ class StoragePackage(unittest.TestCase):
     def test_legacy_inventory_backup_still_restores(self):
         names = tool.INVENTORY_SOURCE_FILES + [tool.CONFIG]
         before = {name: (self.root / name).read_bytes() for name in names}
-        result = tool.git_apply(self.root, self.kit / 'server/inventory-only.patch')
+        name = 'inventory-only.patch' if b'setWhNpcExpands(6)' in BASELINE[tool.SOURCE_FILES[7]] else 'inventory-upstream.patch'
+        result = tool.git_apply(self.root, self.kit / 'server' / name)
         self.assertEqual(result.returncode, 0, result.stderr)
         after = {name: (self.root / name).read_bytes() for name in names}
         backup = tool.backup_files(self.root, before, after, 'server')

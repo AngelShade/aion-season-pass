@@ -16,6 +16,8 @@ The client integration is built from the supported original client; no previousl
 
 ## Works together with my other published mods
 
+Install Season Pass individually with `Install-Module.ps1 -Kind source`, `-Kind server` or `-Kind client`. Run the same entry point from another module repository against the same target to add that module while preserving prior selections. See [individual installation and recovery](docs/INDIVIDUAL_MODULES.md).
+
 | Mod | Repository | Installation with Season Pass |
 | --- | --- | --- |
 | Central Market | [aion-central-market](https://github.com/AngelShade/aion-central-market) | Combined profile |

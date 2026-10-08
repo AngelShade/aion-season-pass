@@ -1,0 +1,401 @@
+{
+  "version": 1,
+  "upstream": "267ce6033f39e8d297d2ac2657e5a6e930723578",
+  "files": [
+    {
+      "path": "game-server/assembly.xml",
+      "original": "88822a36ed5160bb8d7a2afda9d9dbe502e61a9be41cf138a38105746cd9bb22",
+      "payload": "a96e135adfd0a7e4590f02022b93c6f46172f946f23b1137fa74ed772b128404"
+    },
+    {
+      "path": "game-server/config/central-market/media/icon_sources.tsv",
+      "original": null,
+      "payload": "b45ac82ba086a86659c069adb94daa4fe116cfe5d2035bc412ebb8e3a6b73289"
+    },
+    {
+      "path": "game-server/config/central-market/media/market.css",
+      "original": null,
+      "payload": "5f97f834eeccacbda49bb4117c766eb54e0797add0c57966f66eeade84f00449"
+    },
+    {
+      "path": "game-server/config/central-market/media/market.html",
+      "original": null,
+      "payload": "5acc765325ef9f1b98d0dc8eb0863c6809e8ff8952939fd3bf414fa645dcbc19"
+    },
+    {
+      "path": "game-server/config/central-market/media/market.js",
+      "original": null,
+      "payload": "8a3763b365c0f80b1b741c60c22809e6babc860afb0ddd9638c38f5d8cc0b11d"
+    },
+    {
+      "path": "game-server/config/central-market/schema.sql",
+      "original": null,
+      "payload": "bef79d955abdc7cc462b52552fec20e43b0d208cd61937079fb568e9f50d43a9"
+    },
+    {
+      "path": "game-server/config/journey/media/journey.css",
+      "original": null,
+      "payload": "48ea8e7d744899e1aaace1d5527ec5284475d1c4faa5603841509db174d8d7d3"
+    },
+    {
+      "path": "game-server/config/journey/media/journey.html",
+      "original": null,
+      "payload": "719b5407aac6396b4b675e41668dd27b5adface3b245bcce7c8e04c17c998cac"
+    },
+    {
+      "path": "game-server/config/journey/media/journey.js",
+      "original": null,
+      "payload": "5cdc5ed2fe6fc622ceaaaa6f6f505a59a6561ceb8038c18a5a7951b3328d910d"
+    },
+    {
+      "path": "game-server/config/journey/schema.sql",
+      "original": null,
+      "payload": "3622dd1266b7bfd3b8dfea6d7697baee88f42c699245b9cd97af2d36c706c357"
+    },
+    {
+      "path": "game-server/config/main/central-market-simulation.properties",
+      "original": null,
+      "payload": "712f73c84f4eda3d2e4e07b05558ac16fec1368c7baa10890f84427172f3c898"
+    },
+    {
+      "path": "game-server/config/main/gameserver.properties",
+      "original": "4c018a490b44d36e10eba570d33435296737f6bcb48e247410f4bd3f1e01435c",
+      "payload": "ad7462aadb82335ec39592f647513dfabe7bf6070ccfaecf2b82b27fd6496adf"
+    },
+    {
+      "path": "game-server/config/season-pass/media/aether-crest.png",
+      "original": null,
+      "payload": "de26a9919f3e78efc31db38f9b00017629690a17acdbc92b317e2710247650b3"
+    },
+    {
+      "path": "game-server/config/season-pass/media/aether-frame.png",
+      "original": null,
+      "payload": "0c13dab34807e38d7c61c7e9b1702861cc6135f2b4ad5e80358823996c470872"
+    },
+    {
+      "path": "game-server/config/season-pass/media/ascendant-crest.png",
+      "original": null,
+      "payload": "82e5324bea79dbe2633f7acae7bb19144bd3d0fa5d1ce79da8d52beb8a3cc8ce"
+    },
+    {
+      "path": "game-server/config/season-pass/media/ascendant-dawn.png",
+      "original": null,
+      "payload": "12996426bb7a20f8a312394177b64323e77e67e6e6eb3ffb1385cb29c6da1ea9"
+    },
+    {
+      "path": "game-server/config/season-pass/media/pass-panel.png",
+      "original": null,
+      "payload": "d4491956389dbfd4f323f1e189a249a788261d72ef1c962b500bcbdcd78352a3"
+    },
+    {
+      "path": "game-server/config/season-pass/media/pass.css",
+      "original": null,
+      "payload": "4b496eef4d8e1e4742887b600b334a0ea923643a031d94117bea722cc0f56405"
+    },
+    {
+      "path": "game-server/config/season-pass/media/pass.html",
+      "original": null,
+      "payload": "4dc0e0bb18a4d01ee1a7c872c7577b20691539faf5ae726042648662da3827d2"
+    },
+    {
+      "path": "game-server/config/season-pass/media/pass.js",
+      "original": null,
+      "payload": "1e7a479d4e234d7e8d279ff1a43438dabf56b29d354fd1f52ccb3bdd9dbd5869"
+    },
+    {
+      "path": "game-server/config/season-pass/missions.tsv",
+      "original": null,
+      "payload": "f6c20c9065208a881c6cceabe740de07cbe53854a3a1eabda34d3620535bae66"
+    },
+    {
+      "path": "game-server/config/season-pass/rewards.tsv",
+      "original": null,
+      "payload": "b41d23ee650f00796b63763561a7398fd8b3c1924f44ea59d19e74f00e541fa2"
+    },
+    {
+      "path": "game-server/config/season-pass/schema.sql",
+      "original": null,
+      "payload": "86b8b6ec80a09f136c7ed6408a89549804e661a6c505119696d5d39e72219123"
+    },
+    {
+      "path": "game-server/config/season-pass/season.properties",
+      "original": null,
+      "payload": "5c2229a86bd28c66259c807cf5f8f6894ef12021697714eb751859d6679e6c36"
+    },
+    {
+      "path": "game-server/config/wardrobe/media/wardrobe.css",
+      "original": null,
+      "payload": "675311ff0e3c9ccf6fc6ed86b9d20cdd8ff548fea3b8a5ca2355d6cd946791bb"
+    },
+    {
+      "path": "game-server/config/wardrobe/media/wardrobe.html",
+      "original": null,
+      "payload": "b5e92cb9ff149491d711f3386dd5cc5567a30dd4dbac2fcab12852d78b40e79a"
+    },
+    {
+      "path": "game-server/config/wardrobe/media/wardrobe.js",
+      "original": null,
+      "payload": "ff4e1ffa659be3b6114a0dabffab81abb75b6df644f593bb7b3a8d85af3dc158"
+    },
+    {
+      "path": "game-server/config/wardrobe/schema.sql",
+      "original": null,
+      "payload": "7a1f02ec6398fdc384180b8f61d1761873097c808226248693a35084f7091a64"
+    },
+    {
+      "path": "game-server/data/handlers/quest/ishalgen/_2000Prologue.java",
+      "original": "937f850606e8d7888136c634805435678760a9dca65862680b1f3f30b8d00dce",
+      "payload": "ae93c4ede7d01a8ed7a0f074b013500c871e481fc1b95b62cc916485562181c4"
+    },
+    {
+      "path": "game-server/data/handlers/quest/poeta/_1000Prologue.java",
+      "original": "240a18a4c822c2cd84c6ee4b5b3bb407418f17da7abe3340620d0ccb27dab4ff",
+      "payload": "3f0201150867e7cb90dd941eab614827b65768d3b50bfa093990bf92cb6be260"
+    },
+    {
+      "path": "game-server/data/static_data/decomposable_items/decomposable_items.xml",
+      "original": "4d9fee8bcb010d4860d2e86c465181861322c27b5a113422266943bc195b30ef",
+      "payload": "15b4b38598e519f8d0c5fef8a40d948782901a8d205eeefe363dcd675ec527a5"
+    },
+    {
+      "path": "game-server/data/static_data/items/item_templates.xml",
+      "original": "ceab8d9e11cfd2ab815f22bfa934f13f38a96d81d9419db255a5496ce5c7aac9",
+      "payload": "d1dee97800b386980f87103ff815b04b511d758be96324c3cbc951fb995280e7"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/GameServer.java",
+      "original": "0757b157198cd86253b910c8630925b8649afdf4f4b8808f767ca8dd70074a4c",
+      "payload": "39482fa9334d99487d78df76c5cd5e1c5a12f110fa7f673f82f5eae7295bd410"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/ShutdownHook.java",
+      "original": "45ec9179b9a02f34cd674d26ef34aabba33d32e4fa257fc9a54aa60ce74646c6",
+      "payload": "ac5942eb3cd9c17f8f9fe9d3f2920f96e79f1d9f10f475c4d38f29d99f479141"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/configs/Config.java",
+      "original": "da7360a2f29b181ab315fa8ba3e2597cb15dd5b8223dc8575938dda52d1cbf5e",
+      "payload": "a147b3f41a5d376c9259caa980b15c250923d5c01e9d15f7086fe43ee7865ebe"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/configs/main/CentralMarketSimulationConfig.java",
+      "original": null,
+      "payload": "fa9be82943e13bb6fccca512def7bd55af8182a66029926db0ec209bd41c27ae"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/configs/main/CustomConfig.java",
+      "original": "f230f050685bd4a3902e7a43f55eaf747945a01799f2456cdaf009289dc1e6b0",
+      "payload": "8d27fde9311b4e71432a18f8728a11f9bfa5adef23b9b63029a17eae0f1d4b60"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/configs/main/GSConfig.java",
+      "original": "3623671ab72f6e4a12a44a788a80b0a73abbd1487d47b4da8c1b8080828407fd",
+      "payload": "e74758dfb1767c687cf191cd0a83ed2d8f7a7e2e7508b736ac132ff847d4ec33"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/controllers/GatherableController.java",
+      "original": "80659055ddbddf7efde504d1505adc23529d23815ca7e4075ce20503f2f369d0",
+      "payload": "d427fbe489c853b774758ce566a6e7724a807bb41170294c303a94ac3bd803e5"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/controllers/NpcController.java",
+      "original": "e9ae6e5329d2ede66f7f2478ddb354f927ee372b2f3ee6fafec17212c3312b7d",
+      "payload": "0404285412c071c3c293632b5c3a1112b27b5cbf192f45668f137731249955bd"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/dao/InventoryDAO.java",
+      "original": "d1d0b6abfc4e701d05e0421b3ba510399e2684c739b986990083f87c6762c121",
+      "payload": "2a49a6d5fccd1f405b473515239d822a035f06806961b055ddb8bbb44530b739"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/model/gameobjects/player/Player.java",
+      "original": "d9aee6d8c5aa84aba75edfca02f033ed791fe58262a0c39032f24d029643e3dc",
+      "payload": "6070923510677ba35da32b899db90f2f6b3d158db984e679abe47f8e19eac5c3"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/model/items/storage/IStorage.java",
+      "original": "a48215d3132fff12ea1543c18d0b20dfca0c6177848800f713663a7915e0100c",
+      "payload": "615b51e81d7c079f57cd72e31cb21d44c88a60e380b3b77eef69fe5003ba88da"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/model/items/storage/Storage.java",
+      "original": "4304147bfcdba730ecf38814c56d4277faf52d6cb93b6b1be2d7679412cb4b74",
+      "payload": "207960c041241fa9dbee18a961f167fe891bbda1a9d278f97f08a17d71ea39f8"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/model/items/storage/StorageType.java",
+      "original": "6157f6e44ed3aef33895f5d55318b3a1d57f1d35cd95bba61f6b70f180630899",
+      "payload": "ab8f73d2147acd80bdb0f39b97cd0a2df8b4af76061ea9388a2f58bd912b4fa8"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/model/team/common/service/PlayerTeamDistributionService.java",
+      "original": "109f7d0ed23f97c5d75ac388b5659cde83180483ca3685d2d48c3eb027077965",
+      "payload": "902a10b65d3a7e05957443d46f8769bc2475eb15f50bf10ee3a7b3c2fc8fca41"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/model/templates/QuestTemplate.java",
+      "original": "44a3e064046fb39c929f6f02540443b911a2c35862ae08210cc5cc6403161563",
+      "payload": "00cc8f41d4b856d2e231bde2dc94109bd1e2c66f7cb28d2682f573e2eabed24a"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/model/templates/item/actions/ExpandInventoryAction.java",
+      "original": "243e2ae544a95e16a9d3196633015954df463551efd2f21e44af8af31aaf1020",
+      "payload": "4690544e9706657a11780cf62db5b5779890e95168cba803f6d7640385d049e2"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/network/aion/AionClientPacket.java",
+      "original": "548ca3095d7ab339df1f2d15aa01d646214d3365e0bbc50854c7fe3339e47356",
+      "payload": "bf9225ce6a0f8796f9ec39ee72c72f63b4f7ffb562033c0f0a2f7cc89d1d91d4"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/network/aion/clientpackets/CM_ENTER_WORLD.java",
+      "original": "709d42eb7bced07d36cfc3ee79df7660f99372056fe1dd1476102804533ed599",
+      "payload": "4977f4126a46e98d39dfc796845a1af60e321ea6c78bde8c25837156615f23f5"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_CUBE_UPDATE.java",
+      "original": "91353e130203d4c34b041af54c96465c2915a9a8bbb8494766e56e3dba21e8ec",
+      "payload": "fa8b3562bff432c3beef5f0f4138ed99633a0f5ee8c249be6ba4e900d9d21bbc"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_INVENTORY_INFO.java",
+      "original": "d814b30b5bc7d1a1d6eac45019fef430ed01769d55af6a061be43467274b5ab8",
+      "payload": "89dd0e6a64a66cc4ee09ff151169bfa7cd8467329bb46490d89a0ff6e34afb10"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/AccountService.java",
+      "original": "574a0509903345f999b683f1a15543ecbf587fdb900260031d10ace6ca2fa58b",
+      "payload": "4aa5e4be2957de54510c069f92366d15dc92e2c89d3d5a05dbebe33f18e60b3b"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/CentralMarketBrowse.java",
+      "original": null,
+      "payload": "d27bae52f1e8167337265708dcaf03e3340b633d8dd6027557e8db9c4f754964"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/CentralMarketHttpService.java",
+      "original": null,
+      "payload": "1d621dff9272eca3fc552603a229857e4d18afad71f2d310c44161ae3d6efac3"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/CentralMarketPreferences.java",
+      "original": null,
+      "payload": "a1ecdd07efba9e5b7634f824e215979fc50d77a2d4b2c8e577440e5829d40d58"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/CentralMarketRules.java",
+      "original": null,
+      "payload": "426fb7d831aa018ba2fbf9cb0e71f132c82ed70c99c72628496dd15fff9e5244"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/CentralMarketService.java",
+      "original": null,
+      "payload": "881eff012ddccba86d241ebcb73d826504a842cf5dda47374032a7f9bcffe0c1"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/CentralMarketSettlement.java",
+      "original": null,
+      "payload": "2d9c1ac035bf8e8c9c069abf060646afc915138987b5711037ad855f794ddc2a"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/CentralMarketSimulation.java",
+      "original": null,
+      "payload": "1618a67c6ce0f3e4625f5beac285b353d294942c11baf8f7a81f17b1d31fc4b3"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/CubeExpandService.java",
+      "original": "dbd3808347e2b4b5f8e1af321cdfdfbc04b4cf45995220af5761854cfdbfaa3e",
+      "payload": "247c5a458bbcf4d300742125a02ead5c63679911461ef8ac948ce7be3954d564"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/PoetaJourneyHttpService.java",
+      "original": null,
+      "payload": "8b6c29a244631c6386a070ed671928ce55dfb751a10bca75a3175fbf37e92a4c"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/PoetaJourneyRules.java",
+      "original": null,
+      "payload": "4e276b8fa59ecbee79f4073b09d047975a57e25f5ddb0f21ccb7eeeab4c742d6"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/PoetaJourneyService.java",
+      "original": null,
+      "payload": "e661f70687b4ae3c694d1448bb24bec8cc2ee8583109086f08f47d3fc9bd7882"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/PvpService.java",
+      "original": "0349bcdac7bd7c88404dead5a5fdf54f3a5f80f471b2de316477c428ba99f791",
+      "payload": "6bb6d7ac114eed12e89d373837403c0c32bb2535340096cb63a99aec910bf1db"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/QuestService.java",
+      "original": "acf6173d0e47fffe877b8b7025e148d4cef1400b24c7390621da3619dfa42a31",
+      "payload": "3f5ca67a69945c8f19d9d66f5442df4d9efc817fcaf9eb58f0e4d39b2ff168eb"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/SeasonPassHttpService.java",
+      "original": null,
+      "payload": "b1581f9f107fd2d8c9a05012f3c63032013c1f00c7b257734f9e75e0ac1d9db7"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/SeasonPassRules.java",
+      "original": null,
+      "payload": "8a66cab8c1dac7a0bcd7d868434d0c4cd8caa962f0c2e524fe77c34674d05ce3"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/SeasonPassService.java",
+      "original": null,
+      "payload": "35f47132ab07874d634dd8502cd52f33b386f2a022eafefd553db222b99b8940"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/SharedModsHttpService.java",
+      "original": null,
+      "payload": "e19d7c803c0495c3de253216deaad91d808d73bae66f46ed73ffe95ca1965ac2"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/WardrobeHttpService.java",
+      "original": null,
+      "payload": "23c7689d5597c2f90c32c9bd37f2c0e59b187646f7f8f42c5fd7b97b424ad140"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/WardrobeRules.java",
+      "original": null,
+      "payload": "490848d509ce90ebf340261200f8d423076e067a8c9807bf75d25260f27051fc"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/WardrobeService.java",
+      "original": null,
+      "payload": "9d278de0e26831ae17ca828603b1ab38b9546d4947590499758783c283d59607"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/WarehouseService.java",
+      "original": "bc2cfe5742cca01cc9830b033a7f6477316959bcc548ad47ab09eb93905eac6a",
+      "payload": "c4e19580cbcff9cbee0aec8cd8d0e19d26a41de4ea4e16ebf4d0e724218a5de6"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/craft/CraftService.java",
+      "original": "c7696c962c6f8c717ca3726f2f3be99ef9f604bb1b2c09585a286e4d56422833",
+      "payload": "1a1b1f202111abf0dbbcc035dcfe9b5969ff8640a0d0c52590888b2ba14edded"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/player/PlayerEnterWorldService.java",
+      "original": "3c72ef8214fb0e9353fd95dfd9afe36442300d9c554210b8c15cff69bf6e0c89",
+      "payload": "3b26971d4a1c45c3c6299a837d44b7f58804b61ab5b765d337c7fc5077c0da70"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/player/PlayerService.java",
+      "original": "719493c2ff0f71d13a47ad57a6fa06560384dc0c74ac75af98e80202c694fd2b",
+      "payload": "42ac796d324aeb1d2170f13d3cbf029f43e9d05716e27ea648c99a9d27a938f8"
+    },
+    {
+      "path": "game-server/src/com/aionemu/gameserver/services/player/WebSessionService.java",
+      "original": null,
+      "payload": "580e1fd5708de9567da0da34588ea49fdc8c85f3c7feb060484b924db7cb0a2f"
+    },
+    {
+      "path": "pom.xml",
+      "original": "b3d13a5dcb0981a66e8a91dc7b5a98f6166c81b2aefd142d3cbe82813e995058",
+      "payload": "63d334f0b62b414b4d1c604269b39990ad0bc258d5f1396e1f6319db0125314b"
+    }
+  ]
+}
