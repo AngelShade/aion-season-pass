@@ -51,6 +51,8 @@ public class CubeExpandService {
 
 			@Override
 			public void acceptRequest(Npc requester, Player responder) {
+				if (!canExpand(responder))
+					return;
 				if (responder.getInventory().tryDecreaseKinah(price, ItemUpdateType.DEC_KINAH_CUBE))
 					npcExpand(responder);
 				else
@@ -115,7 +117,9 @@ public class CubeExpandService {
 		int newExpansions = player.getNpcExpands() + player.getQuestExpands() + player.getItemExpands() + 1;
 		if (newExpansions < 0)
 			return false;
-		if (newExpansions > CustomConfig.CUBE_EXPANSION_LIMIT) {
+		int expansionLimit = CustomConfig.UNIFIED_INVENTORY
+			? Math.min(CustomConfig.CUBE_EXPANSION_LIMIT, CustomConfig.UNIFIED_INVENTORY_MAX_EXPANSIONS) : CustomConfig.CUBE_EXPANSION_LIMIT;
+		if (newExpansions > expansionLimit) {
 			PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_EXTEND_INVENTORY_CANT_EXTEND_MORE());
 			return false;
 		}

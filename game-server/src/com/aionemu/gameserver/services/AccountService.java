@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.aionemu.gameserver.GameServer;
 import com.aionemu.gameserver.configs.main.GSConfig;
+import com.aionemu.gameserver.configs.main.CustomConfig;
 import com.aionemu.gameserver.dao.*;
 import com.aionemu.gameserver.model.Race;
 import com.aionemu.gameserver.model.account.Account;
@@ -94,6 +95,8 @@ public class AccountService {
 
 	public static Storage loadAccountWarehouse(Account account) {
 		Storage wh = new PlayerStorage(null, StorageType.ACCOUNT_WAREHOUSE);
+		if (CustomConfig.EXPANDED_WAREHOUSES)
+			wh.setLimit(CustomConfig.EXPANDED_ACCOUNT_WAREHOUSE_SLOTS);
 		InventoryDAO.loadStorage(account.getId(), wh);
 		ItemStoneListDAO.load(wh.getItems());
 		return wh;

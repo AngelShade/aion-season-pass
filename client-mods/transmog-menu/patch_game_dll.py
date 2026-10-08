@@ -377,7 +377,7 @@ def emit_exact_route(asm, register, literal, mismatch, compact=False):
     asm.label(literal + '_done')
 
 
-def build_market_auth_code(url, compact=False):
+def build_market_auth_code(url, compact=False, hook_rva=MARKET_AUTH_HOOK_RVA):
     """Use the native token request callback, then navigate to the authenticated market URL."""
     urls = [url] if isinstance(url,str) else url
     if not urls or len(set(urls)) != len(urls):
@@ -387,10 +387,10 @@ def build_market_auth_code(url, compact=False):
         if not route.startswith(('http://127.0.0.1:8091/', 'https://')) or len(route.encode('ascii')) > 127:
             raise ValueError('Market authentication requires an exact loopback or HTTPS route')
         origins.add(route.split('/', 3)[0] + '//' + route.split('/', 3)[2])
-    asm = Assembler(MARKET_AUTH_HOOK_RVA)
+    asm = Assembler(hook_rva)
     asm.emit(b'\x48\x85\xc9')
     asm.branch(b'\x0f\x84', 'original')
-    shared = compact and len(urls) >= 5 and len(origins) == 1
+    shared = compact and len(urls) >= 4 and len(origins) == 1
     prefix = next(iter(origins)) + '/' if shared else ''
     if shared:
         # Check the common origin once. rcx stays unchanged for native URL copying.
@@ -496,13 +496,17 @@ def build_dll(original_path, commands, cash_shop_url):
     if market_routes:
         if data[MARKET_AUTH_RVA:MARKET_AUTH_RVA+len(MARKET_AUTH_ORIGINAL)] != MARKET_AUTH_ORIGINAL:
             raise ValueError('Native account authentication entry does not match')
-        auth = build_market_auth_code(market_routes, compact=any(route.endswith('/pass') for route in market_routes))
-        if len(auth)>BROWSER_HOOK_RVA-MARKET_AUTH_HOOK_RVA or any(data[MARKET_AUTH_HOOK_RVA:MARKET_AUTH_HOOK_RVA+len(auth)]):
+        compact = any(route.endswith('/pass') for route in market_routes)
+        # The combined menu has no chat-command table here. Use another 64 bytes
+        # of verified zero padding for four exact routes with a long HTTPS host.
+        auth_rva = MARKET_AUTH_HOOK_RVA - 0x40 if compact and len(market_routes) >= 4 else MARKET_AUTH_HOOK_RVA
+        auth = build_market_auth_code(market_routes, compact=compact, hook_rva=auth_rva)
+        if len(auth)>BROWSER_HOOK_RVA-auth_rva or any(data[auth_rva:auth_rva+len(auth)]):
             raise ValueError('Market authentication does not fit its verified code region')
-        data[MARKET_AUTH_HOOK_RVA:MARKET_AUTH_HOOK_RVA+len(auth)] = auth
-        data[MARKET_AUTH_RVA:MARKET_AUTH_RVA+len(MARKET_AUTH_ORIGINAL)] = b'\xe9'+struct.pack('<i',MARKET_AUTH_HOOK_RVA-MARKET_AUTH_RVA-5)+b'\x90'*(len(MARKET_AUTH_ORIGINAL)-5)
+        data[auth_rva:auth_rva+len(auth)] = auth
+        data[MARKET_AUTH_RVA:MARKET_AUTH_RVA+len(MARKET_AUTH_ORIGINAL)] = b'\xe9'+struct.pack('<i',auth_rva-MARKET_AUTH_RVA-5)+b'\x90'*(len(MARKET_AUTH_ORIGINAL)-5)
         rect = build_market_rect_code()
-        if (MARKET_AUTH_HOOK_RVA + len(auth) > MARKET_RECT_HOOK_RVA
+        if (auth_rva + len(auth) > MARKET_RECT_HOOK_RVA
                 or MARKET_RECT_HOOK_RVA + len(rect) > BROWSER_HOOK_RVA
                 or any(data[MARKET_RECT_HOOK_RVA:MARKET_RECT_HOOK_RVA + len(rect)])
                 or data[MARKET_RECT_RVA:MARKET_RECT_RVA + len(MARKET_RECT_ORIGINAL)] != MARKET_RECT_ORIGINAL):

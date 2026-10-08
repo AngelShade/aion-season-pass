@@ -60,8 +60,8 @@ def hud(data, style):
                   preset='season_ticket_button', tooltip=shortcut.TOOLTIP)
     return encode_binary_xml(tree)
 
-def compile_shortcut(output):
-    work = output.parent / (output.name + '-shortcut-build')
+def compile_shortcut(output, source=HERE / 'season_shortcut.cpp', suffix='shortcut'):
+    work = output.parent / (output.name + '-' + suffix + '-build')
     work.mkdir()
     vcvars = Path(os.environ.get('ProgramFiles(x86)', r'C:\Program Files (x86)')) / 'Microsoft Visual Studio/2022/BuildTools/VC/Auxiliary/Build/vcvars64.bat'
     if not vcvars.is_file():
@@ -71,7 +71,7 @@ def compile_shortcut(output):
     script = work / 'compile.cmd'
     script.write_text('@echo off\ncall "' + str(vcvars) + '" >nul\nif errorlevel 1 exit /b 1\n'
         + 'cl /nologo /std:c++17 /EHsc /O2 /MT /LD /Fo:"' + str(work / 'shortcut.obj') + '" "'
-        + str(HERE / 'season_shortcut.cpp') + '" /link /OUT:"' + str(target)
+        + str(source) + '" /link /OUT:"' + str(target)
         + '" /IMPLIB:"' + str(work / 'shortcut.lib') + '"\n', encoding='utf-8')
     subprocess.run('cmd.exe /d /s /c ""' + str(script) + '""', check=True)
 

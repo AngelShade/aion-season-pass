@@ -185,12 +185,17 @@ public class GameServer {
 		SystemInfo.logAll();
 
 		nioServer = initNioServer();
+		if (CustomConfig.ENABLE_SHARED_MODS) {
+			try { SharedModsHttpService.start(); }
+			catch (Exception e) { throw new IllegalStateException("Could not start shared mods", e); }
+		} else {
 		try {
 			CentralMarketHttpService.start();
 		} catch (Exception e) {
 			log.error("Could not start Central Market", e);
 		}
 		try { SeasonPassHttpService.start(); } catch (Exception e) { log.error("Could not start Season Pass", e); }
+		}
 		Runtime.getRuntime().addShutdownHook(ShutdownHook.getInstance());
 		log.info("Game server started in " + (System.currentTimeMillis() / 1000 - START_TIME_SECONDS) + " seconds.");
 

@@ -1,0 +1,38 @@
+{
+  "name": "Inventory and Warehouse Expansion for Aion 4.8 NA (64-bit)",
+  "baseSlots": 180,
+  "maxSlots": 279,
+  "columns": 12,
+  "visibleRows": 9,
+  "expansionSlots": 9,
+  "maxExpansionCredits": 11,
+  "originalDllSha256": "5334cf2164468678e45fe1a5decf58a0fbc4fd7f22cfdcbb87d28edce8d2c11c",
+  "inventoryDllSha256": "fdd4e229190d841f96144b51c979ac6466119f6044ba452eada0b5886e0e09f6",
+  "serverFiles": [
+    "game-server/src/com/aionemu/gameserver/configs/main/CustomConfig.java",
+    "game-server/src/com/aionemu/gameserver/model/gameobjects/player/Player.java",
+    "game-server/src/com/aionemu/gameserver/model/templates/item/actions/ExpandInventoryAction.java",
+    "game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_CUBE_UPDATE.java",
+    "game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_INVENTORY_INFO.java",
+    "game-server/src/com/aionemu/gameserver/services/CubeExpandService.java",
+    "game-server/src/com/aionemu/gameserver/services/player/PlayerEnterWorldService.java",
+    "game-server/src/com/aionemu/gameserver/services/player/PlayerService.java",
+    "game-server/src/com/aionemu/gameserver/services/AccountService.java",
+    "game-server/src/com/aionemu/gameserver/services/WarehouseService.java"
+  ],
+  "referenceCommit": "a2454d8c6cc29801952037aca3d78742ce298ca2",
+  "inventoryServerFiles": [
+    "game-server/src/com/aionemu/gameserver/configs/main/CustomConfig.java",
+    "game-server/src/com/aionemu/gameserver/model/gameobjects/player/Player.java",
+    "game-server/src/com/aionemu/gameserver/model/templates/item/actions/ExpandInventoryAction.java",
+    "game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_CUBE_UPDATE.java",
+    "game-server/src/com/aionemu/gameserver/network/aion/serverpackets/SM_INVENTORY_INFO.java",
+    "game-server/src/com/aionemu/gameserver/services/CubeExpandService.java",
+    "game-server/src/com/aionemu/gameserver/services/player/PlayerEnterWorldService.java",
+    "game-server/src/com/aionemu/gameserver/services/player/PlayerService.java"
+  ],
+  "characterWarehouseSlots": 360,
+  "accountWarehouseSlots": 540,
+  "inventoryWarehouseDllSha256": "3a60729e01ea8d6d44e9797fd41a2134a2cee4c07f96b9d9564d2ba8611e6967",
+  "inventoryWarehouseDetachedDllSha256": "53f50fcd11e1b4b50221775cc95dd0f0ff1964466fa702580774d260d155c045"
+}

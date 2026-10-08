@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.aionemu.gameserver.dataholders.DataManager;
+import com.aionemu.gameserver.configs.main.CustomConfig;
 import com.aionemu.gameserver.model.gameobjects.Item;
 import com.aionemu.gameserver.model.gameobjects.Npc;
 import com.aionemu.gameserver.model.gameobjects.player.Player;
@@ -95,6 +96,10 @@ public class WarehouseService {
 	}
 
 	public static boolean canExpand(Player player) {
+		if (CustomConfig.EXPANDED_WAREHOUSES) {
+			PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_EXTEND_CHAR_WAREHOUSE_CANT_EXTEND_MORE());
+			return false;
+		}
 		int newExpansions = player.getWarehouseExpansions() + 1;
 		if (newExpansions < 0)
 			return false;
@@ -146,8 +151,13 @@ public class WarehouseService {
 
 		if (sendAccountWh) {
 			// account warehouse
-			PacketSendUtility.sendPacket(player, new SM_WAREHOUSE_INFO(player.getStorage(StorageType.ACCOUNT_WAREHOUSE.getId()).getItemsWithKinah(),
-				StorageType.ACCOUNT_WAREHOUSE.getId(), 0, true, player));
+			List<Item> accountItems = player.getStorage(StorageType.ACCOUNT_WAREHOUSE.getId()).getItemsWithKinah();
+			if (accountItems.isEmpty())
+				PacketSendUtility.sendPacket(player, new SM_WAREHOUSE_INFO(null, StorageType.ACCOUNT_WAREHOUSE.getId(), 0, true, player));
+			for (int index = 0; index < accountItems.size(); index += 10) {
+				PacketSendUtility.sendPacket(player, new SM_WAREHOUSE_INFO(accountItems.subList(index, Math.min(index + 10, accountItems.size())),
+					StorageType.ACCOUNT_WAREHOUSE.getId(), 0, index == 0, player));
+			}
 		}
 
 		PacketSendUtility.sendPacket(player, new SM_WAREHOUSE_INFO(null, StorageType.ACCOUNT_WAREHOUSE.getId(), 0, false, player));

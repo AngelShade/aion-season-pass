@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.aionemu.gameserver.configs.administration.AdminConfig;
+import com.aionemu.gameserver.configs.main.CustomConfig;
 import com.aionemu.gameserver.configs.main.SecurityConfig;
 import com.aionemu.gameserver.controllers.FlyController;
 import com.aionemu.gameserver.controllers.PlayerController;
@@ -425,7 +426,13 @@ public class Player extends Creature {
 	}
 
 	public void setCubeLimit() {
-		getInventory().setLimit(StorageType.CUBE.getLimit() + (getNpcExpands() + getQuestExpands() + getItemExpands()) * getInventory().getRowLength());
+		int expansions = getNpcExpands() + getQuestExpands() + getItemExpands();
+		int base = StorageType.CUBE.getLimit();
+		if (CustomConfig.UNIFIED_INVENTORY) {
+			base = CustomConfig.UNIFIED_INVENTORY_SLOTS;
+			expansions = Math.max(0, Math.min(expansions, CustomConfig.UNIFIED_INVENTORY_MAX_EXPANSIONS));
+		}
+		getInventory().setLimit(base + expansions * getInventory().getRowLength());
 	}
 
 	public PlayerClass getPlayerClass() {
@@ -688,7 +695,8 @@ public class Player extends Creature {
 	}
 
 	public void setWarehouseLimit() {
-		getWarehouse().setLimit(StorageType.REGULAR_WAREHOUSE.getLimit() + (getWarehouseExpansions() * getWarehouse().getRowLength()));
+		getWarehouse().setLimit(CustomConfig.EXPANDED_WAREHOUSES ? CustomConfig.EXPANDED_CHARACTER_WAREHOUSE_SLOTS
+			: StorageType.REGULAR_WAREHOUSE.getLimit() + (getWarehouseExpansions() * getWarehouse().getRowLength()));
 	}
 
 	/**

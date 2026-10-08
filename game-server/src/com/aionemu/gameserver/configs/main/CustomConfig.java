@@ -7,6 +7,10 @@ import org.quartz.CronExpression;
 import com.aionemu.commons.configuration.Property;
 
 public class CustomConfig {
+	@Property(key = "gameserver.sharedmods.enable", defaultValue = "false")
+	public static boolean ENABLE_SHARED_MODS;
+	@Property(key = "gameserver.poeta.journey.enable", defaultValue = "false")
+	public static boolean ENABLE_POETA_JOURNEY;
 
 	/**
 	 * Enables challenge tasks
@@ -100,6 +104,21 @@ public class CustomConfig {
 	 */
 	@Property(key = "gameserver.cube.expansion_limit", defaultValue = "11")
 	public static int CUBE_EXPANSION_LIMIT;
+
+	/** Requires the matching 4.8 NA native inventory client patch. */
+	@Property(key = "gameserver.inventory.unified", defaultValue = "false")
+	public static boolean UNIFIED_INVENTORY;
+
+	public static final int UNIFIED_INVENTORY_SLOTS = 180;
+	/** Native inventory patch reserves 279 cells: 180 base plus eleven nine-slot expansions. */
+	public static final int UNIFIED_INVENTORY_MAX_EXPANSIONS = 11;
+
+	/** Requires the matching 4.8 NA native warehouse client patch. */
+	@Property(key = "gameserver.warehouse.expanded", defaultValue = "false")
+	public static boolean EXPANDED_WAREHOUSES;
+
+	public static final int EXPANDED_CHARACTER_WAREHOUSE_SLOTS = 360;
+	public static final int EXPANDED_ACCOUNT_WAREHOUSE_SLOTS = 540;
 
 	/**
 	 * Npc Cube Expands limit size

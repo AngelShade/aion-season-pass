@@ -1,5 +1,6 @@
 package com.aionemu.gameserver.network.aion.serverpackets;
 
+import com.aionemu.gameserver.configs.main.CustomConfig;
 import com.aionemu.gameserver.model.gameobjects.player.Player;
 import com.aionemu.gameserver.model.items.storage.StorageType;
 import com.aionemu.gameserver.network.aion.AionConnection;
@@ -37,6 +38,11 @@ public class SM_CUBE_UPDATE extends AionServerPacket {
 				npcExpands = player.getNpcExpands();
 				questExpands = player.getQuestExpands();
 				itemExpands = player.getItemExpands();
+				if (CustomConfig.UNIFIED_INVENTORY) {
+					// Include base slots and earned expansions in the existing nine-slot protocol.
+					npcExpands = questExpands = 0;
+					itemExpands = (player.getInventory().getLimit() - StorageType.CUBE.getLimit()) / type.getLength();
+				}
 				break;
 			case REGULAR_WAREHOUSE:
 				itemsCount = player.getWarehouse().size();

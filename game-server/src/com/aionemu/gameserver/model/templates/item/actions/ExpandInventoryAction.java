@@ -36,6 +36,9 @@ public class ExpandInventoryAction extends AbstractItemAction {
 
 	@Override
 	public void act(Player player, Item parentItem, Item targetItem, Object... params) {
+		// Capacity can change during the item-use delay. Never consume a ticket at the limit.
+		if (storage == StorageType.CUBE && !canAct(player, parentItem, targetItem, params))
+			return;
 		if (!player.getInventory().decreaseByObjectId(parentItem.getObjectId(), 1))
 			return;
 		ItemTemplate itemTemplate = parentItem.getItemTemplate();

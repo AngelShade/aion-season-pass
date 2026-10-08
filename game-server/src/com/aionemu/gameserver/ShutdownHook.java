@@ -75,6 +75,7 @@ public class ShutdownHook extends Thread {
 		}
 
 		CentralMarketHttpService.stop();
+		com.aionemu.gameserver.services.SharedModsHttpService.stop();
 		com.aionemu.gameserver.services.SeasonPassHttpService.stop();
 		GameServer.shutdownNioServer(); // shuts down network, disconnects cs/ls/all players and schedules leaveWorld
 		PlayerLeaveWorldService.processPendingLeaveWorldTasks();

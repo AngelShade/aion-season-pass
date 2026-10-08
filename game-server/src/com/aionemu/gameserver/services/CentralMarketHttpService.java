@@ -84,8 +84,8 @@ public final class CentralMarketHttpService {
 			String notice="";
 			if(path.equals("/market/action")) {
 				if(!method.equals("POST")){send(x,405,"application/json","{\"error\":\"Use POST for warehouse actions.\"}");return;}
-				String origin=x.getRequestHeaders().getFirst("Origin"),expected="http://"+x.getRequestHeaders().getFirst("Host");
-				if(origin!=null&&!origin.equals(expected))throw new IllegalArgumentException("Reopen Warehouse to continue.");
+				String origin=x.getRequestHeaders().getFirst("Origin"),host=x.getRequestHeaders().getFirst("Host");
+				if(origin!=null&&!SeasonPassHttpService.matchesOriginHost(origin,host))throw new IllegalArgumentException("Reopen Warehouse to continue.");
 				String id=args.getOrDefault("request",""); Form form=FORMS.get(id);
 				if(form==null||form.player()!=p||form.connection()!=p.getClientConnection()||form.expires()<System.currentTimeMillis()) {
 					send(x,403,"application/json","{\"error\":\"This form expired. Refresh Warehouse.\"}");return;

@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$Archive,[Parameter(Mandatory=$true)][string]$Destination)
+param([Parameter(Mandatory=$true)][string]$Archive,[Parameter(Mandatory=$true)][string]$Destination,[switch]$SharedMods)
 $ErrorActionPreference='Stop'
 $archivePath=(Resolve-Path -LiteralPath $Archive).Path
 $target=[IO.Path]::GetFullPath($Destination).TrimEnd('\')
@@ -31,4 +31,14 @@ try {
   [IO.Compression.ZipFileExtensions]::ExtractToFile($entry,$path,$false)
  }
 } finally {$zip.Dispose()}
+if($SharedMods){
+ Set-Content -LiteralPath (Join-Path $target 'config/mygs.properties') -Encoding ascii -Value @(
+  'gameserver.sharedmods.enable = true',
+  'gameserver.inventory.unified = true',
+  'gameserver.cube.expansion_limit = 11',
+  'gameserver.warehouse.expanded = true',
+  'gameserver.poeta.journey.enable = true',
+  'gameserver.simple.secondclass.enable = false'
+ )
+}
 Write-Output "OK: server distribution installed in $target. Configure database and login-server settings before starting it."

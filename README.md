@@ -14,6 +14,17 @@ Complete source release for a character-owned, 30-level Season Pass on the Beyon
 
 The client integration is built from the supported original client; no previously installed Shop, Market, Wardrobe, Journey, graphics package or local recovery receipt is required. Native item artwork comes directly from the recipient's Items.pak.
 
+## Works together with my other published mods
+
+| Mod | Repository | Installation with Season Pass |
+| --- | --- | --- |
+| Central Market | [aion-central-market](https://github.com/AngelShade/aion-central-market) | Combined profile |
+| Wardrobe | [aion-wardrobe](https://github.com/AngelShade/aion-wardrobe) | Combined profile |
+| Skip Poeta / Ishalgen Journey | [aion-poeta-skip](https://github.com/AngelShade/aion-poeta-skip) | Combined profile |
+| Inventory and Warehouse Expansion | [aion-inventory](https://github.com/AngelShade/aion-inventory) | Combined profile |
+
+Use the [combined installation guide](docs/SHARED_MODS.md) for these mods together. It builds one native client package and starts one shared server listener. It also supports upgrades from recorded standalone installations using a separate original client copy. Separate standalone installers should not be layered over this profile. Combined gameplay acceptance remains a recipient check.
+
 ## Requirements
 
 Server: JDK 25, Maven and MySQL/MariaDB. Client builder: Python 3.12+, Pillow, JDK 25, and Visual Studio 2022 C++ Build Tools with the Windows SDK.

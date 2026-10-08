@@ -3,8 +3,10 @@ package com.aionemu.gameserver.network.aion.serverpackets;
 import java.util.Collections;
 import java.util.List;
 
+import com.aionemu.gameserver.configs.main.CustomConfig;
 import com.aionemu.gameserver.model.gameobjects.Item;
 import com.aionemu.gameserver.model.gameobjects.player.Player;
+import com.aionemu.gameserver.model.items.storage.StorageType;
 import com.aionemu.gameserver.model.templates.item.ItemTemplate;
 import com.aionemu.gameserver.network.aion.AionConnection;
 import com.aionemu.gameserver.network.aion.AionServerPacket;
@@ -32,11 +34,12 @@ public class SM_INVENTORY_INFO extends AionServerPacket {
 	@Override
 	protected void writeImpl(AionConnection con) {
 
-		// something wrong with cube part.
 		writeC(isFirstPacket ? 1 : 0);
-		writeC(player.getNpcExpands()); // cube size from npc (so max 5 for now)
-		writeC(player.getQuestExpands()); // cube size from quest (so max 2 for now)
-		writeC(player.getItemExpands()); // count of ticket expands
+		// Login must advertise the same capacity as SM_CUBE_UPDATE.
+		writeC(CustomConfig.UNIFIED_INVENTORY ? 0 : player.getNpcExpands());
+		writeC(CustomConfig.UNIFIED_INVENTORY ? 0 : player.getQuestExpands());
+		writeC(CustomConfig.UNIFIED_INVENTORY ? (player.getInventory().getLimit() - StorageType.CUBE.getLimit()) / StorageType.CUBE.getLength()
+			: player.getItemExpands());
 		writeH(items.size()); // number of entries
 		for (Item item : items)
 			writeItemInfo(item);

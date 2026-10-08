@@ -107,7 +107,7 @@ public final class SeasonPassHttpService {
 		for(String part:text.split("&")) { String[] kv=part.split("=",2); if(kv.length==2) out.put(URLDecoder.decode(kv[0],StandardCharsets.UTF_8),URLDecoder.decode(kv[1],StandardCharsets.UTF_8)); }
 		return out;
 	}
-	private static boolean matchesOriginHost(String origin,String host) {
+	static boolean matchesOriginHost(String origin,String host) {
 		try {
 			URI uri=URI.create(origin);
 			return host!=null && uri.getUserInfo()==null && "".equals(uri.getRawPath()) && uri.getQuery()==null && uri.getFragment()==null
