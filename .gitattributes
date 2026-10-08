@@ -4,3 +4,5 @@
 *.jpeg -text
 *.dds -text
 *.zip -text
+# Unified diff context lines require leading spaces before tabs and blank lines.
+*.patch -whitespace
